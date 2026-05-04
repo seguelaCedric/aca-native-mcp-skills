@@ -1,0 +1,48 @@
+{
+  "name": "aca-native-mcp-skills",
+  "version": "1.0.0",
+  "description": "ACA Native MCP Skills for strategy, lead sourcing, outreach, deliverability, content, and operations.",
+  "license": "MIT",
+  "homepage": "https://aca.so/product/integrations/mcp",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/aca-platform/aca-native-mcp-skills.git"
+  },
+  "author": {
+    "name": "ACA",
+    "url": "https://aca.so"
+  },
+  "keywords": [
+    "aca",
+    "mcp",
+    "skills",
+    "outbound",
+    "cold-email",
+    "linkedin",
+    "lead-generation",
+    "sales",
+    "content"
+  ],
+  "bin": {
+    "aca-native-mcp-skills": "./install.sh",
+    "aca-skills-install": "./install.sh"
+  },
+  "files": [
+    "README.md",
+    "LICENSE",
+    ".mcp.example.json",
+    "install.sh",
+    "scripts/",
+    ".codex-plugin/",
+    ".claude-plugin/",
+    "aca-*/SKILL.md"
+  ],
+  "scripts": {
+    "validate": "./scripts/validate.sh",
+    "pack:release": "./scripts/package.sh",
+    "install:dry-run": "./install.sh codex --dry-run"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}

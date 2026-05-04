@@ -1,0 +1,10 @@
+{
+  "mcpServers": {
+    "aca": {
+      "url": "https://your-aca-domain.com/functions/v1/mcp",
+      "headers": {
+        "Authorization": "Bearer aca_mcp_sk_live_..."
+      }
+    }
+  }
+}

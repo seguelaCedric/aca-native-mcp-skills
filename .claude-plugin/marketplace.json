@@ -1,0 +1,27 @@
+{
+  "name": "aca-native-mcp-skills",
+  "owner": {
+    "name": "ACA",
+    "email": "support@aca.so"
+  },
+  "metadata": {
+    "description": "ACA Native MCP Skills for outbound, content, deliverability, and operations.",
+    "version": "1.0.0"
+  },
+  "plugins": [
+    {
+      "name": "aca-native-mcp-skills",
+      "source": "./",
+      "description": "Run ACA workflows through one native ACA MCP connection.",
+      "version": "1.0.0",
+      "keywords": [
+        "aca",
+        "mcp",
+        "outbound",
+        "sales",
+        "content"
+      ],
+      "category": "productivity"
+    }
+  ]
+}

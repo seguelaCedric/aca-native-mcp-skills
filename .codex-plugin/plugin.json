@@ -1,0 +1,42 @@
+{
+  "name": "aca-native-mcp-skills",
+  "version": "1.0.0",
+  "description": "ACA Native MCP Skills: strategy, lead sourcing, outreach, deliverability, content, and operations through one ACA MCP connection.",
+  "author": {
+    "name": "ACA",
+    "url": "https://aca.so"
+  },
+  "homepage": "https://aca.so/product/integrations/mcp",
+  "repository": "https://github.com/aca-platform/aca-native-mcp-skills",
+  "license": "MIT",
+  "keywords": [
+    "aca",
+    "mcp",
+    "outbound",
+    "cold-email",
+    "linkedin",
+    "lead-generation",
+    "sales",
+    "content"
+  ],
+  "skills": "./",
+  "interface": {
+    "displayName": "ACA Native MCP Skills",
+    "shortDescription": "Run ACA outbound, content, and ops workflows through one MCP connection.",
+    "longDescription": "A publishable bundle of ACA skills for strategy, lead sourcing, campaign launch, deliverability, content production, reply scoring, and weekly operations. Requires a configured ACA MCP server.",
+    "developerName": "ACA",
+    "category": "Productivity",
+    "capabilities": [
+      "Read",
+      "Write",
+      "Interactive"
+    ],
+    "websiteURL": "https://aca.so/product/integrations/mcp",
+    "defaultPrompt": [
+      "Run ACA kickoff for my workspace.",
+      "Find and launch an ACA campaign.",
+      "Give me an ACA pipeline status brief."
+    ],
+    "brandColor": "#D92D20"
+  }
+}
