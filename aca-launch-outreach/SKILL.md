@@ -147,6 +147,41 @@ First sends: {when_or_draft_note}
 Track: {campaign_url_if_available}
 ```
 
+## Skill chaining
+
+This skill participates in the ACA chain. Preserve the selected ACA org, relevant IDs, user brief, approval state, and any generated artifacts when continuing into another ACA skill. If the user asked for execution and a downstream condition is met, continue into the next skill automatically; otherwise end with the handoff block.
+
+**Upstream**
+- Called by `aca-kickoff`, `aca-campaign-strategy`, `aca-campaign-copywriting`, `aca-lead-quality`, or `aca-email-sequence-manager`.
+
+**Auto-continue conditions**
+- No lead list -> continue to `aca-find-leads`.
+- Lead list unscored -> continue to `aca-lead-quality`.
+- Missing sender -> continue to `aca-sender-health`.
+- Email channel selected and readiness unknown -> continue to `aca-email-deliverability-audit`.
+- Copy missing or weak -> continue to `aca-campaign-copywriting`.
+- Campaign created -> continue to `aca-pipeline-status`.
+
+**Stop before chaining when**
+- Ask before activating campaigns or contacting leads.
+
+**Downstream skills**
+- `aca-find-leads` - source missing audience.
+- `aca-lead-quality` - clean list before launch.
+- `aca-sender-health` - resolve sender blockers.
+- `aca-email-deliverability-audit` - preflight email risk.
+- `aca-campaign-copywriting` - create missing copy.
+- `aca-pipeline-status` - confirm launch state.
+
+**Handoff block**
+
+```text
+Chain state: {continue|needs_approval|blocked|complete}
+Next skill: {aca-skill-name|none}
+Reason: {why this handoff is or is not needed}
+Carry forward: {org_id/name, product_id, icp_id, lead_list_id, campaign_id, sequence_id, job_id, approvals, constraints}
+```
+
 ## ACA tools used
 
 - `list_lead_lists`, `get_lead_list`

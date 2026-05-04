@@ -12,6 +12,7 @@ package_dir="$stage/$name"
 mkdir -p "$package_dir"
 
 cp "$root/README.md" "$package_dir/"
+cp "$root/CHAINING.md" "$package_dir/"
 cp "$root/LICENSE" "$package_dir/"
 cp "$root/.mcp.example.json" "$package_dir/"
 cp "$root/install.sh" "$package_dir/"

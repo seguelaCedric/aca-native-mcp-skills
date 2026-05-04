@@ -46,6 +46,37 @@ Needed before launch: {missing_items}
 Next: {aca-find-leads / aca-campaign-copywriting / aca-launch-outreach}
 ```
 
+## Skill chaining
+
+This skill participates in the ACA chain. Preserve the selected ACA org, relevant IDs, user brief, approval state, and any generated artifacts when continuing into another ACA skill. If the user asked for execution and a downstream condition is met, continue into the next skill automatically; otherwise end with the handoff block.
+
+**Upstream**
+- Called after `aca-kickoff`, `aca-icp-onboarding`, `aca-lead-quality`, or `aca-auto-research`.
+
+**Auto-continue conditions**
+- No audience/list exists -> continue to `aca-find-leads`.
+- Audience exists but quality is unclear -> continue to `aca-lead-quality`.
+- Strategy is approved and copy is missing -> continue to `aca-campaign-copywriting`.
+- Strategy, copy, senders, and audience are ready -> continue to `aca-launch-outreach`.
+
+**Stop before chaining when**
+- Ask before mutating existing live campaigns.
+
+**Downstream skills**
+- `aca-find-leads` - build the audience for this strategy.
+- `aca-campaign-copywriting` - write the message sequence.
+- `aca-email-deliverability-audit` - check email readiness before launch.
+- `aca-launch-outreach` - create the ACA campaign.
+
+**Handoff block**
+
+```text
+Chain state: {continue|needs_approval|blocked|complete}
+Next skill: {aca-skill-name|none}
+Reason: {why this handoff is or is not needed}
+Carry forward: {org_id/name, product_id, icp_id, lead_list_id, campaign_id, sequence_id, job_id, approvals, constraints}
+```
+
 ## ACA tools used
 
 - `list_products`, `list_icps`, `list_brand_voices`

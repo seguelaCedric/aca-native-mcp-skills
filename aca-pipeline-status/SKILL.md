@@ -70,6 +70,38 @@ Nothing else needs attention.
 - User asks for a date range: adjust the filters where tools support it, otherwise say which sections are current-state only.
 - Agency user asks for all clients: call `list_accessible_organizations`, loop with `switch_organization`, collect compact metrics, then switch back.
 
+## Skill chaining
+
+This skill participates in the ACA chain. Preserve the selected ACA org, relevant IDs, user brief, approval state, and any generated artifacts when continuing into another ACA skill. If the user asked for execution and a downstream condition is met, continue into the next skill automatically; otherwise end with the handoff block.
+
+**Upstream**
+- Called after launches, during daily checks, or by `aca-weekly-rhythm`.
+
+**Auto-continue conditions**
+- Workspace empty -> continue to `aca-kickoff`.
+- Main bottleneck unclear -> continue to `aca-auto-research`.
+- Deliverability or sender blocker -> continue to `aca-deliverability-incident-response` or `aca-sender-health`.
+- Replies need review -> continue to `aca-positive-reply-scoring`.
+
+**Stop before chaining when**
+- Read-only unless the downstream skill asks for approval.
+
+**Downstream skills**
+- `aca-kickoff` - start empty workspace.
+- `aca-auto-research` - choose the next best action.
+- `aca-deliverability-incident-response` - triage campaign/send problems.
+- `aca-positive-reply-scoring` - review replies.
+- `aca-weekly-rhythm` - turn status into an operating plan.
+
+**Handoff block**
+
+```text
+Chain state: {continue|needs_approval|blocked|complete}
+Next skill: {aca-skill-name|none}
+Reason: {why this handoff is or is not needed}
+Carry forward: {org_id/name, product_id, icp_id, lead_list_id, campaign_id, sequence_id, job_id, approvals, constraints}
+```
+
 ## ACA tools used
 
 - `list_accessible_organizations`, `switch_organization`

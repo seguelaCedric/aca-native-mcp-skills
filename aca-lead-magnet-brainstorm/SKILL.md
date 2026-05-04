@@ -44,6 +44,34 @@ Why: {reason}
 Draft campaign: {campaign_id or not created}
 ```
 
+## Skill chaining
+
+This skill participates in the ACA chain. Preserve the selected ACA org, relevant IDs, user brief, approval state, and any generated artifacts when continuing into another ACA skill. If the user asked for execution and a downstream condition is met, continue into the next skill automatically; otherwise end with the handoff block.
+
+**Upstream**
+- Usually called by `aca-kickoff`, `aca-icp-onboarding`, or `aca-campaign-strategy` when the campaign needs a free resource or inbound hook.
+
+**Auto-continue conditions**
+- If a lead magnet concept is selected -> continue to `aca-campaign-strategy`.
+- If the user asks to produce supporting content -> continue to `aca-content-week`.
+
+**Stop before chaining when**
+- Ask before creating or activating lead magnet campaigns.
+
+**Downstream skills**
+- `aca-campaign-strategy` - turn the lead magnet into an outbound/inbound plan.
+- `aca-content-week` - create posts or assets that promote the lead magnet.
+- `aca-launch-outreach` - launch outreach once the audience and copy are ready.
+
+**Handoff block**
+
+```text
+Chain state: {continue|needs_approval|blocked|complete}
+Next skill: {aca-skill-name|none}
+Reason: {why this handoff is or is not needed}
+Carry forward: {org_id/name, product_id, icp_id, lead_list_id, campaign_id, sequence_id, job_id, approvals, constraints}
+```
+
 ## ACA tools used
 
 - `list_products`, `list_icps`, `list_brand_voices`

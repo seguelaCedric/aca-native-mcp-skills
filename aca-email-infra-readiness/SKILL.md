@@ -48,6 +48,35 @@ Needs dashboard/DNS check:
 Next: {skill/action}
 ```
 
+## Skill chaining
+
+This skill participates in the ACA chain. Preserve the selected ACA org, relevant IDs, user brief, approval state, and any generated artifacts when continuing into another ACA skill. If the user asked for execution and a downstream condition is met, continue into the next skill automatically; otherwise end with the handoff block.
+
+**Upstream**
+- Called by `aca-sender-health`, `aca-email-deliverability-audit`, or setup workflows.
+
+**Auto-continue conditions**
+- Mailboxes/senders exist -> continue to `aca-sender-health`.
+- Infrastructure appears ready but cold-email risk is unknown -> continue to `aca-email-deliverability-audit`.
+- A small proof is needed -> continue to `aca-deliverability-test`.
+
+**Stop before chaining when**
+- Stop when DNS/dashboard actions are required outside MCP and tell the user exactly what to check.
+
+**Downstream skills**
+- `aca-sender-health` - inspect actual connected sender state.
+- `aca-email-deliverability-audit` - audit sequence readiness.
+- `aca-deliverability-test` - verify with a controlled preflight.
+
+**Handoff block**
+
+```text
+Chain state: {continue|needs_approval|blocked|complete}
+Next skill: {aca-skill-name|none}
+Reason: {why this handoff is or is not needed}
+Carry forward: {org_id/name, product_id, icp_id, lead_list_id, campaign_id, sequence_id, job_id, approvals, constraints}
+```
+
 ## ACA tools used
 
 - `list_email_mailboxes`

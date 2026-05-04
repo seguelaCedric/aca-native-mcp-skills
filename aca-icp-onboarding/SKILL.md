@@ -46,6 +46,35 @@ Fit notes saved: {strategy_document_id}
 Next: {skill}
 ```
 
+## Skill chaining
+
+This skill participates in the ACA chain. Preserve the selected ACA org, relevant IDs, user brief, approval state, and any generated artifacts when continuing into another ACA skill. If the user asked for execution and a downstream condition is met, continue into the next skill automatically; otherwise end with the handoff block.
+
+**Upstream**
+- Usually called by `aca-kickoff`, `aca-auto-research`, or `aca-campaign-strategy` when product/ICP context is missing.
+
+**Auto-continue conditions**
+- If the user asked to launch and ICP records are now ready -> continue to `aca-campaign-strategy`.
+- If audience sourcing is the next blocker -> continue to `aca-find-leads`.
+- If the offer needs an inbound asset -> continue to `aca-lead-magnet-brainstorm`.
+
+**Stop before chaining when**
+- Ask before creating or updating product/ICP records.
+
+**Downstream skills**
+- `aca-campaign-strategy` - turn the ICP into a campaign plan.
+- `aca-find-leads` - source the ICP audience.
+- `aca-lead-magnet-brainstorm` - create an offer/resource for the ICP.
+
+**Handoff block**
+
+```text
+Chain state: {continue|needs_approval|blocked|complete}
+Next skill: {aca-skill-name|none}
+Reason: {why this handoff is or is not needed}
+Carry forward: {org_id/name, product_id, icp_id, lead_list_id, campaign_id, sequence_id, job_id, approvals, constraints}
+```
+
 ## ACA tools used
 
 - `list_products`, `create_product`, `update_product`

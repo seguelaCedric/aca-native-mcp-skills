@@ -47,6 +47,34 @@ C: {optional}
 Apply now: {yes/no}
 ```
 
+## Skill chaining
+
+This skill participates in the ACA chain. Preserve the selected ACA org, relevant IDs, user brief, approval state, and any generated artifacts when continuing into another ACA skill. If the user asked for execution and a downstream condition is met, continue into the next skill automatically; otherwise end with the handoff block.
+
+**Upstream**
+- Called by `aca-campaign-copywriting`, `aca-experiment-design`, or `aca-weekly-rhythm`.
+
+**Auto-continue conditions**
+- After variants are drafted -> continue to `aca-copy-spam-checker`.
+- If the experiment needs tracking -> continue to `aca-experiment-design`.
+
+**Stop before chaining when**
+- Ask before applying variants to draft/paused assets.
+
+**Downstream skills**
+- `aca-copy-spam-checker` - validate variants.
+- `aca-experiment-design` - define the single-variable test.
+- `aca-launch-outreach` - apply approved variants.
+
+**Handoff block**
+
+```text
+Chain state: {continue|needs_approval|blocked|complete}
+Next skill: {aca-skill-name|none}
+Reason: {why this handoff is or is not needed}
+Carry forward: {org_id/name, product_id, icp_id, lead_list_id, campaign_id, sequence_id, job_id, approvals, constraints}
+```
+
 ## ACA tools used
 
 - `list_campaigns`, `get_campaign`, `update_campaign`

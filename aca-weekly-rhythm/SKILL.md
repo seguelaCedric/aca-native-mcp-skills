@@ -102,6 +102,39 @@ Actions:
 Saved note: {strategy_document_id}
 ```
 
+## Skill chaining
+
+This skill participates in the ACA chain. Preserve the selected ACA org, relevant IDs, user brief, approval state, and any generated artifacts when continuing into another ACA skill. If the user asked for execution and a downstream condition is met, continue into the next skill automatically; otherwise end with the handoff block.
+
+**Upstream**
+- Called by the user on a weekly cadence or after `aca-pipeline-status`.
+
+**Auto-continue conditions**
+- Lead pool is low -> continue to `aca-find-leads`.
+- Content queue is low -> continue to `aca-content-week`.
+- Replies need review -> continue to `aca-positive-reply-scoring`.
+- A test is needed -> continue to `aca-experiment-design`.
+- Campaign/sender issue exists -> continue to `aca-deliverability-incident-response`.
+
+**Stop before chaining when**
+- Ask before changing live campaigns, publishing, or importing.
+
+**Downstream skills**
+- `aca-find-leads` - refill audience.
+- `aca-content-week` - refill content.
+- `aca-positive-reply-scoring` - learn from replies.
+- `aca-experiment-design` - plan the next test.
+- `aca-deliverability-incident-response` - handle blockers.
+
+**Handoff block**
+
+```text
+Chain state: {continue|needs_approval|blocked|complete}
+Next skill: {aca-skill-name|none}
+Reason: {why this handoff is or is not needed}
+Carry forward: {org_id/name, product_id, icp_id, lead_list_id, campaign_id, sequence_id, job_id, approvals, constraints}
+```
+
 ## ACA tools used
 
 - `list_campaigns`, `list_campaign_leads`, `update_campaign_status`

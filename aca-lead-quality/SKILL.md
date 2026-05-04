@@ -84,6 +84,35 @@ Main issue: {one-line diagnosis}
 Next: {recommended skill/action}
 ```
 
+## Skill chaining
+
+This skill participates in the ACA chain. Preserve the selected ACA org, relevant IDs, user brief, approval state, and any generated artifacts when continuing into another ACA skill. If the user asked for execution and a downstream condition is met, continue into the next skill automatically; otherwise end with the handoff block.
+
+**Upstream**
+- Called after any lead sourcing skill, or by `aca-kickoff` when an existing list needs validation.
+
+**Auto-continue conditions**
+- Tier 1 list exists and campaign strategy is missing -> continue to `aca-campaign-strategy`.
+- Tier 1 list and strategy/copy are ready -> continue to `aca-launch-outreach`.
+- Many contacts need better targeting -> continue to `aca-find-leads` with corrected filters.
+
+**Stop before chaining when**
+- Ask before tagging large volumes or creating many derived lists if the user did not request cleanup.
+
+**Downstream skills**
+- `aca-campaign-strategy` - plan messaging for the segment.
+- `aca-launch-outreach` - launch to the campaign-ready segment.
+- `aca-find-leads` - refill or correct the audience.
+
+**Handoff block**
+
+```text
+Chain state: {continue|needs_approval|blocked|complete}
+Next skill: {aca-skill-name|none}
+Reason: {why this handoff is or is not needed}
+Carry forward: {org_id/name, product_id, icp_id, lead_list_id, campaign_id, sequence_id, job_id, approvals, constraints}
+```
+
 ## ACA tools used
 
 - `list_lead_lists`, `get_lead_list`, `create_lead_list`, `add_contacts_to_list`

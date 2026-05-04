@@ -50,6 +50,37 @@ Campaign lesson:
 {lesson}
 ```
 
+## Skill chaining
+
+This skill participates in the ACA chain. Preserve the selected ACA org, relevant IDs, user brief, approval state, and any generated artifacts when continuing into another ACA skill. If the user asked for execution and a downstream condition is met, continue into the next skill automatically; otherwise end with the handoff block.
+
+**Upstream**
+- Called by `aca-pipeline-status`, `aca-weekly-rhythm`, or after a campaign has had enough time to collect replies.
+
+**Auto-continue conditions**
+- Winning audience pattern appears -> continue to `aca-lookalike-leads`.
+- Copy lesson appears -> continue to `aca-campaign-copywriting` or `aca-copy-variants`.
+- Experiment is needed -> continue to `aca-experiment-design`.
+
+**Stop before chaining when**
+- Ask before tagging contacts or changing statuses in bulk.
+
+**Downstream skills**
+- `aca-lookalike-leads` - find more prospects like winners.
+- `aca-campaign-copywriting` - apply reply lessons to copy.
+- `aca-copy-variants` - test improved message variants.
+- `aca-experiment-design` - formalize next test.
+- `aca-weekly-rhythm` - record learnings.
+
+**Handoff block**
+
+```text
+Chain state: {continue|needs_approval|blocked|complete}
+Next skill: {aca-skill-name|none}
+Reason: {why this handoff is or is not needed}
+Carry forward: {org_id/name, product_id, icp_id, lead_list_id, campaign_id, sequence_id, job_id, approvals, constraints}
+```
+
 ## ACA tools used
 
 - `list_campaigns`, `get_campaign`, `list_campaign_leads`

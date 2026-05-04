@@ -46,6 +46,35 @@ Capacity notes:
 - {note}
 ```
 
+## Skill chaining
+
+This skill participates in the ACA chain. Preserve the selected ACA org, relevant IDs, user brief, approval state, and any generated artifacts when continuing into another ACA skill. If the user asked for execution and a downstream condition is met, continue into the next skill automatically; otherwise end with the handoff block.
+
+**Upstream**
+- Called by `aca-launch-outreach`, `aca-email-sequence-manager`, `aca-auto-research`, or `aca-pipeline-status` when senders are a blocker.
+
+**Auto-continue conditions**
+- No/weak email infrastructure -> continue to `aca-email-infra-readiness`.
+- Email senders exist but risk is unclear -> continue to `aca-email-deliverability-audit`.
+- Senders are healthy and campaign is waiting -> continue to `aca-launch-outreach`.
+
+**Stop before chaining when**
+- Read-only; ask before any changes are made in downstream skills.
+
+**Downstream skills**
+- `aca-email-infra-readiness` - inspect infrastructure readiness.
+- `aca-email-deliverability-audit` - audit cold-email risk.
+- `aca-launch-outreach` - resume launch when senders are ready.
+
+**Handoff block**
+
+```text
+Chain state: {continue|needs_approval|blocked|complete}
+Next skill: {aca-skill-name|none}
+Reason: {why this handoff is or is not needed}
+Carry forward: {org_id/name, product_id, icp_id, lead_list_id, campaign_id, sequence_id, job_id, approvals, constraints}
+```
+
 ## ACA tools used
 
 - `list_sender_accounts`

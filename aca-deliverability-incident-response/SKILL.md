@@ -47,6 +47,38 @@ Recommended action: {action}
 Approval needed: {yes/no}
 ```
 
+## Skill chaining
+
+This skill participates in the ACA chain. Preserve the selected ACA org, relevant IDs, user brief, approval state, and any generated artifacts when continuing into another ACA skill. If the user asked for execution and a downstream condition is met, continue into the next skill automatically; otherwise end with the handoff block.
+
+**Upstream**
+- Called by `aca-pipeline-status`, `aca-weekly-rhythm`, `aca-deliverability-test`, or user-reported failures.
+
+**Auto-continue conditions**
+- Sender issue -> continue to `aca-sender-health`.
+- Copy issue -> continue to `aca-copy-spam-checker`.
+- List issue -> continue to `aca-lead-quality`.
+- Reply quality issue -> continue to `aca-positive-reply-scoring`.
+
+**Stop before chaining when**
+- Ask before pausing campaigns/sequences or changing limits.
+
+**Downstream skills**
+- `aca-sender-health` - inspect accounts/mailboxes.
+- `aca-copy-spam-checker` - fix risky copy.
+- `aca-lead-quality` - clean bad lists.
+- `aca-positive-reply-scoring` - separate deliverability from market response.
+- `aca-weekly-rhythm` - record incident follow-up.
+
+**Handoff block**
+
+```text
+Chain state: {continue|needs_approval|blocked|complete}
+Next skill: {aca-skill-name|none}
+Reason: {why this handoff is or is not needed}
+Carry forward: {org_id/name, product_id, icp_id, lead_list_id, campaign_id, sequence_id, job_id, approvals, constraints}
+```
+
 ## ACA tools used
 
 - `list_email_mailboxes`, `list_sender_accounts`

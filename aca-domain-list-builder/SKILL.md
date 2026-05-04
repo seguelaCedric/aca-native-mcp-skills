@@ -40,6 +40,34 @@ List: {list_id}
 Next: aca-lead-quality
 ```
 
+## Skill chaining
+
+This skill participates in the ACA chain. Preserve the selected ACA org, relevant IDs, user brief, approval state, and any generated artifacts when continuing into another ACA skill. If the user asked for execution and a downstream condition is met, continue into the next skill automatically; otherwise end with the handoff block.
+
+**Upstream**
+- Called when `aca-find-leads` detects account/domain constraints or the user provides company/domain lists.
+
+**Auto-continue conditions**
+- After building the list -> continue to `aca-lead-quality`.
+- If contacts are missing channel data -> continue to `aca-email-sequence-manager` or `aca-launch-outreach` with `find_email`/`analyze_contact` steps.
+
+**Stop before chaining when**
+- Ask before importing new contacts for a large account list.
+
+**Downstream skills**
+- `aca-lead-quality` - grade account/contact fit.
+- `aca-campaign-strategy` - create account-based messaging.
+- `aca-launch-outreach` - launch once sender and copy are ready.
+
+**Handoff block**
+
+```text
+Chain state: {continue|needs_approval|blocked|complete}
+Next skill: {aca-skill-name|none}
+Reason: {why this handoff is or is not needed}
+Carry forward: {org_id/name, product_id, icp_id, lead_list_id, campaign_id, sequence_id, job_id, approvals, constraints}
+```
+
 ## ACA tools used
 
 - `search_contacts_and_leads`

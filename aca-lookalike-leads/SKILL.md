@@ -42,6 +42,34 @@ Preview count: {count}
 Next: {build/poll/quality}
 ```
 
+## Skill chaining
+
+This skill participates in the ACA chain. Preserve the selected ACA org, relevant IDs, user brief, approval state, and any generated artifacts when continuing into another ACA skill. If the user asked for execution and a downstream condition is met, continue into the next skill automatically; otherwise end with the handoff block.
+
+**Upstream**
+- Called when `aca-find-leads`, `aca-positive-reply-scoring`, or `aca-weekly-rhythm` finds a winning segment.
+
+**Auto-continue conditions**
+- After creating a lookalike list -> continue to `aca-lead-quality`.
+- If the lookalike is based on reply winners -> continue to `aca-experiment-design` after scoring.
+
+**Stop before chaining when**
+- Ask before large builds or fresh imports.
+
+**Downstream skills**
+- `aca-lead-quality` - validate lookalike quality.
+- `aca-experiment-design` - test the lookalike against the control audience.
+- `aca-launch-outreach` - launch when ready.
+
+**Handoff block**
+
+```text
+Chain state: {continue|needs_approval|blocked|complete}
+Next skill: {aca-skill-name|none}
+Reason: {why this handoff is or is not needed}
+Carry forward: {org_id/name, product_id, icp_id, lead_list_id, campaign_id, sequence_id, job_id, approvals, constraints}
+```
+
 ## ACA tools used
 
 - `get_lead_list`, `search_contacts_and_leads`, `get_contact`

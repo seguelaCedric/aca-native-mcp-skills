@@ -1,12 +1,12 @@
 {
   "name": "aca-native-mcp-skills",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "ACA Native MCP Skills for strategy, lead sourcing, outreach, deliverability, content, and operations.",
   "license": "MIT",
   "homepage": "https://aca.so/product/integrations/mcp",
   "repository": {
     "type": "git",
-    "url": "https://github.com/aca-platform/aca-native-mcp-skills.git"
+    "url": "https://github.com/seguelaCedric/aca-native-mcp-skills.git"
   },
   "author": {
     "name": "ACA",
@@ -29,6 +29,7 @@
   },
   "files": [
     "README.md",
+    "CHAINING.md",
     "LICENSE",
     ".mcp.example.json",
     "install.sh",

@@ -106,6 +106,41 @@ Plan saved: {strategy_document_id}
 Next: {skill_name} - {why}
 ```
 
+## Skill chaining
+
+This skill participates in the ACA chain. Preserve the selected ACA org, relevant IDs, user brief, approval state, and any generated artifacts when continuing into another ACA skill. If the user asked for execution and a downstream condition is met, continue into the next skill automatically; otherwise end with the handoff block.
+
+**Upstream**
+- Entry point for new workspaces, vague goals, or first campaigns.
+
+**Auto-continue conditions**
+- No product/ICP exists -> continue to `aca-icp-onboarding`.
+- No audience exists -> continue to `aca-find-leads`.
+- Audience exists but quality is unknown -> continue to `aca-lead-quality`.
+- Campaign-ready audience and senders exist -> continue to `aca-launch-outreach`.
+- The user asks for nurture or social proof -> continue to `aca-content-week`.
+
+**Stop before chaining when**
+- Ask before creating foundation records unless the user already asked you to set up the workspace.
+- Ask before imports, campaign activation, or publishing.
+
+**Downstream skills**
+- `aca-icp-onboarding` - create missing product/ICP foundation.
+- `aca-find-leads` - build the first audience.
+- `aca-lead-quality` - clean/segment an existing list.
+- `aca-launch-outreach` - create the first campaign.
+- `aca-content-week` - generate content support.
+- `aca-pipeline-status` - inspect an already-running workspace.
+
+**Handoff block**
+
+```text
+Chain state: {continue|needs_approval|blocked|complete}
+Next skill: {aca-skill-name|none}
+Reason: {why this handoff is or is not needed}
+Carry forward: {org_id/name, product_id, icp_id, lead_list_id, campaign_id, sequence_id, job_id, approvals, constraints}
+```
+
 ## ACA tools used
 
 - `list_accessible_organizations`, `switch_organization`

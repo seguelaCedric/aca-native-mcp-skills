@@ -32,6 +32,8 @@ No direct SQL. No separate vendor secrets in the skill bundle. No hardcoded work
 
 27 skills organized in 6 tracks.
 
+These skills are chained. Each skill includes upstream/downstream rules and a handoff block so an agent can continue into the next ACA workflow while preserving org context, IDs, approvals, and constraints. See [CHAINING.md](CHAINING.md) for the chain maps.
+
 ### Strategy
 
 - `aca-kickoff` - guided setup and routing: product, ICP, brand voice, channels, first plan
@@ -180,6 +182,7 @@ This repo includes:
 - `.claude-plugin/plugin.json` for Claude Code plugin discovery
 - `.claude-plugin/marketplace.json` as Claude-style marketplace metadata
 - `package.json` for npm-style packaging and release scripts
+- `CHAINING.md` for the explicit chain contract and flow maps
 
 Validate and build release artifacts:
 
@@ -191,8 +194,8 @@ npm run pack:release
 Release artifacts are written to `dist/`:
 
 ```text
-dist/aca-native-mcp-skills-1.0.0.tar.gz
-dist/aca-native-mcp-skills-1.0.0.zip
+dist/aca-native-mcp-skills-1.1.0.tar.gz
+dist/aca-native-mcp-skills-1.1.0.zip
 ```
 
 ## Guardrails
@@ -207,6 +210,7 @@ dist/aca-native-mcp-skills-1.0.0.zip
 ```text
 aca-native-mcp-skills/
   README.md
+  CHAINING.md
   LICENSE
   .mcp.example.json
   package.json

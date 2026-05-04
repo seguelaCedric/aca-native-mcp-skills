@@ -43,6 +43,34 @@ List: {list_id}
 Recommended angle: {angle}
 ```
 
+## Skill chaining
+
+This skill participates in the ACA chain. Preserve the selected ACA org, relevant IDs, user brief, approval state, and any generated artifacts when continuing into another ACA skill. If the user asked for execution and a downstream condition is met, continue into the next skill automatically; otherwise end with the handoff block.
+
+**Upstream**
+- Called by `aca-find-leads` or campaign planning for competitor/category audiences.
+
+**Auto-continue conditions**
+- After audience creation -> continue to `aca-lead-quality`.
+- After quality scoring -> continue to `aca-campaign-strategy` for a respectful alternative angle.
+
+**Stop before chaining when**
+- Ask before fresh imports and avoid hostile competitor messaging.
+
+**Downstream skills**
+- `aca-lead-quality` - clean the competitor/category audience.
+- `aca-campaign-strategy` - build the alternative-to campaign.
+- `aca-campaign-copywriting` - write non-hostile copy.
+
+**Handoff block**
+
+```text
+Chain state: {continue|needs_approval|blocked|complete}
+Next skill: {aca-skill-name|none}
+Reason: {why this handoff is or is not needed}
+Carry forward: {org_id/name, product_id, icp_id, lead_list_id, campaign_id, sequence_id, job_id, approvals, constraints}
+```
+
 ## ACA tools used
 
 - `search_lead_pool`, `build_lead_pool_list`, `get_lead_pool_build_job`

@@ -90,6 +90,39 @@ Sample:
 Next: {aca-lead-quality or aca-launch-outreach}
 ```
 
+## Skill chaining
+
+This skill participates in the ACA chain. Preserve the selected ACA org, relevant IDs, user brief, approval state, and any generated artifacts when continuing into another ACA skill. If the user asked for execution and a downstream condition is met, continue into the next skill automatically; otherwise end with the handoff block.
+
+**Upstream**
+- Called by `aca-kickoff`, `aca-campaign-strategy`, `aca-auto-research`, or any sourcing-specific skill.
+
+**Auto-continue conditions**
+- Local vertical/geography brief -> continue to `aca-local-business-leads` if not already there.
+- Seed/customer lookalike brief -> continue to `aca-lookalike-leads` if not already there.
+- Domain/account list brief -> continue to `aca-domain-list-builder` if not already there.
+- Competitor/category brief -> continue to `aca-competitor-engagers` if not already there.
+- List is built -> continue to `aca-lead-quality`.
+
+**Stop before chaining when**
+- Ask before materializing large lead-pool lists or starting fresh imports.
+
+**Downstream skills**
+- `aca-local-business-leads` - geo/vertical local list.
+- `aca-lookalike-leads` - lookalike audience.
+- `aca-domain-list-builder` - account/domain-based list.
+- `aca-competitor-engagers` - competitor/category audience.
+- `aca-lead-quality` - grade and segment the resulting list.
+
+**Handoff block**
+
+```text
+Chain state: {continue|needs_approval|blocked|complete}
+Next skill: {aca-skill-name|none}
+Reason: {why this handoff is or is not needed}
+Carry forward: {org_id/name, product_id, icp_id, lead_list_id, campaign_id, sequence_id, job_id, approvals, constraints}
+```
+
 ## ACA tools used
 
 - `list_icps`

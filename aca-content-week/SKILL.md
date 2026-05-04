@@ -94,6 +94,36 @@ Jobs:
 Next: {track / approve / schedule}
 ```
 
+## Skill chaining
+
+This skill participates in the ACA chain. Preserve the selected ACA org, relevant IDs, user brief, approval state, and any generated artifacts when continuing into another ACA skill. If the user asked for execution and a downstream condition is met, continue into the next skill automatically; otherwise end with the handoff block.
+
+**Upstream**
+- Called by `aca-kickoff`, `aca-weekly-rhythm`, `aca-auto-research`, or content-support campaign plans.
+
+**Auto-continue conditions**
+- No brand/product/ICP context -> continue to `aca-icp-onboarding`.
+- Jobs are launched -> continue to `aca-pipeline-status` for tracking.
+- Content supports outbound offer -> continue to `aca-campaign-strategy`.
+
+**Stop before chaining when**
+- Ask before publishing or scheduling content.
+
+**Downstream skills**
+- `aca-icp-onboarding` - create missing content context.
+- `aca-pipeline-status` - track generation jobs.
+- `aca-campaign-strategy` - use content as campaign support.
+- `aca-weekly-rhythm` - add content into the operating cadence.
+
+**Handoff block**
+
+```text
+Chain state: {continue|needs_approval|blocked|complete}
+Next skill: {aca-skill-name|none}
+Reason: {why this handoff is or is not needed}
+Carry forward: {org_id/name, product_id, icp_id, lead_list_id, campaign_id, sequence_id, job_id, approvals, constraints}
+```
+
 ## ACA tools used
 
 - `list_brand_voices`, `list_products`, `list_icps`

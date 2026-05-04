@@ -45,6 +45,35 @@ Risk: {low/medium/high}
 Approval needed before sending: yes
 ```
 
+## Skill chaining
+
+This skill participates in the ACA chain. Preserve the selected ACA org, relevant IDs, user brief, approval state, and any generated artifacts when continuing into another ACA skill. If the user asked for execution and a downstream condition is met, continue into the next skill automatically; otherwise end with the handoff block.
+
+**Upstream**
+- Called by `aca-email-deliverability-audit`, `aca-email-infra-readiness`, or before a high-risk launch.
+
+**Auto-continue conditions**
+- Test plan needs a sequence -> continue to `aca-email-sequence-manager`.
+- Test passes and campaign exists -> continue to `aca-launch-outreach`.
+- Test fails -> continue to `aca-deliverability-incident-response`.
+
+**Stop before chaining when**
+- Ask before sending test traffic.
+
+**Downstream skills**
+- `aca-email-sequence-manager` - create/enroll test sequence.
+- `aca-launch-outreach` - proceed after passing.
+- `aca-deliverability-incident-response` - triage failures.
+
+**Handoff block**
+
+```text
+Chain state: {continue|needs_approval|blocked|complete}
+Next skill: {aca-skill-name|none}
+Reason: {why this handoff is or is not needed}
+Carry forward: {org_id/name, product_id, icp_id, lead_list_id, campaign_id, sequence_id, job_id, approvals, constraints}
+```
+
 ## ACA tools used
 
 - `list_email_mailboxes`, `list_sender_accounts`
