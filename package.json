@@ -1,7 +1,7 @@
 {
   "name": "aca-native-mcp-skills",
-  "version": "1.1.0",
-  "description": "ACA Native MCP Skills for strategy, lead sourcing, outreach, deliverability, content, and operations.",
+  "version": "1.1.1",
+  "description": "Agent skills for Automated Client Acquisition: define ICPs, build audiences, launch outreach, manage deliverability, create content, and optimize campaigns through one ACA MCP connection.",
   "license": "MIT",
   "homepage": "https://aca.so/product/integrations/mcp",
   "repository": {

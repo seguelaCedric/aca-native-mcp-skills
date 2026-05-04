@@ -2,11 +2,27 @@
 
 **One ACA MCP connection. 27 agent skills. Zero vendor API sprawl.**
 
-ACA Native MCP Skills turns ACA (Automated Client Acquisition) into an agent-operable growth system for Claude, Codex, Cursor, Goose, and other skills-compatible runtimes.
+ACA Native MCP Skills turns Automated Client Acquisition into an agent-operable growth system for Claude, Codex, Cursor, Goose, and other skills-compatible runtimes.
 
 Instead of wiring separate Smartlead, Prospeo, Zapmail, Apify, LinkedIn, GHL, and enrichment keys into every agent workflow, you connect ACA once. ACA handles auth, organization scoping, sender accounts, lead sources, content generation, publishing, and campaign execution through its native MCP server.
 
-## What You Can Do
+## What Is Automated Client Acquisition?
+
+Automated Client Acquisition is the repeatable operating system for turning a clear offer and ICP into qualified sales conversations.
+
+ACA coordinates the full acquisition loop:
+
+1. Define the offer, ICP, proof, disqualifiers, and campaign angle.
+2. Build or import the right audience.
+3. Score, segment, and clean the list before outreach.
+4. Launch personalized LinkedIn, email, and multi-channel campaigns.
+5. Monitor sender health, deliverability, replies, and campaign progress.
+6. Create content and lead magnets that support outbound and nurture.
+7. Learn from replies, run experiments, and improve the next campaign.
+
+In practical terms, ACA is a CRM, lead-list engine, outreach campaign builder, email sequence system, content generator, reply workflow, and weekly operating cadence in one workspace. These skills let an AI agent operate that system through one native MCP connection.
+
+## What You Can Do With These Skills
 
 - Launch outbound campaigns from a plain-English brief.
 - Build lead lists from ACA's native lead pool, LinkedIn imports, and account constraints.
@@ -20,7 +36,7 @@ Instead of wiring separate Smartlead, Prospeo, Zapmail, Apify, LinkedIn, GHL, an
 
 Most outbound agent stacks are a pile of brittle credentials and vendor-specific playbooks. ACA already centralizes the operational layer: CRM contacts, lead lists, campaigns, email sequences, sender accounts, content blueprints, autopilots, and publishing.
 
-These skills give agents the procedural layer on top of ACA:
+These skills give agents the procedural layer on top of that ACA operating system:
 
 ```text
 User request -> Agent skill -> ACA MCP -> ACA workspace
@@ -194,8 +210,8 @@ npm run pack:release
 Release artifacts are written to `dist/`:
 
 ```text
-dist/aca-native-mcp-skills-1.1.0.tar.gz
-dist/aca-native-mcp-skills-1.1.0.zip
+dist/aca-native-mcp-skills-1.1.1.tar.gz
+dist/aca-native-mcp-skills-1.1.1.zip
 ```
 
 ## Guardrails

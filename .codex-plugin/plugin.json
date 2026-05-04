@@ -1,7 +1,7 @@
 {
   "name": "aca-native-mcp-skills",
-  "version": "1.1.0",
-  "description": "ACA Native MCP Skills: strategy, lead sourcing, outreach, deliverability, content, and operations through one ACA MCP connection.",
+  "version": "1.1.1",
+  "description": "Agent skills for Automated Client Acquisition: define ICPs, build audiences, launch outreach, manage deliverability, create content, and optimize campaigns through one ACA MCP connection.",
   "author": {
     "name": "ACA",
     "url": "https://aca.so"
@@ -22,8 +22,8 @@
   "skills": "./",
   "interface": {
     "displayName": "ACA Native MCP Skills",
-    "shortDescription": "Run ACA outbound, content, and ops workflows through one MCP connection.",
-    "longDescription": "A publishable bundle of ACA skills for strategy, lead sourcing, campaign launch, deliverability, content production, reply scoring, and weekly operations. Requires a configured ACA MCP server.",
+    "shortDescription": "Run the full client-acquisition loop through one ACA MCP connection.",
+    "longDescription": "A publishable bundle of ACA skills for Automated Client Acquisition: define offers and ICPs, build and score audiences, launch personalized outreach, monitor deliverability, create content support, score replies, and run weekly optimization. Requires a configured ACA MCP server.",
     "developerName": "ACA",
     "category": "Productivity",
     "capabilities": [

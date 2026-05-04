@@ -5,8 +5,8 @@
     "email": "support@aca.so"
   },
   "metadata": {
-    "description": "ACA Native MCP Skills for outbound, content, deliverability, and operations.",
-    "version": "1.1.0"
+    "description": "Agent skills for Automated Client Acquisition: audience building, outreach, deliverability, content, replies, and weekly optimization.",
+    "version": "1.1.1"
   },
   "plugins": [
     {
