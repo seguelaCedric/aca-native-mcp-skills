@@ -1,6 +1,6 @@
 {
   "name": "aca",
-  "version": "1.1.1",
+  "version": "1.2.0",
   "description": "ACA, Agent-operable outbound: cold email, LinkedIn automation, buying signals, lead magnets, content farm, and cheap BYO-API cold-email infra. Connect once via MCP to run leads, lists, sequences, and campaigns from your agent so you can book meetings and make more sales.",
   "author": {
     "name": "ACA"

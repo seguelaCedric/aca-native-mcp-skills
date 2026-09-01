@@ -1,6 +1,6 @@
 {
   "name": "aca-native-mcp-skills",
-  "version": "1.1.1",
+  "version": "1.2.0",
   "description": "Agent skills for Automated Client Acquisition: define ICPs, build audiences, launch outreach, manage deliverability, create content, and optimize campaigns through one ACA MCP connection.",
   "license": "MIT",
   "homepage": "https://aca.so/product/integrations/mcp",
@@ -36,7 +36,10 @@
     "scripts/",
     ".codex-plugin/",
     ".claude-plugin/",
-    "aca-*/SKILL.md"
+    "aca-*/SKILL.md",
+    "skills/",
+    ".cursor-plugin/",
+    "mcp.json"
   ],
   "scripts": {
     "validate": "./scripts/validate.sh",
