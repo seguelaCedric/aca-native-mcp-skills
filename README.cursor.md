@@ -35,9 +35,14 @@ This plugin registers the **aca** MCP server:
 
 Once connected, Cursor agents can use ACA MCP tools (subject to your account permissions) for outbound and CRM-adjacent workflows—leads, lists, sequences, and outreach—without embedding secrets in the repo.
 
-## Skills note
+## Skills
 
-This release is **MCP-only**. Dedicated agent skills / rules will arrive in a later version; Claude and Codex packaging in the sibling repo remain separate.
+Cursor discovers skills under `skills/`:
+
+- Crew orchestration: `aca-crew-handoff`, `aca-crew-roles`, `aca-mcp-ops`
+- Product workflows: the existing `aca-*` playbooks (also kept at repo root for Claude/Codex)
+
+Connect ACA MCP first, then use these skills for outbound and multi-agent crew handoffs.
 
 ## Links
 
