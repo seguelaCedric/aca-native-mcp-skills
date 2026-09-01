@@ -1,23 +1,34 @@
 {
   "name": "aca",
   "version": "1.1.1",
-  "description": "Official Automated Client Acquisition connector. Connect agents to ACA’s MCP to manage leads, lists, sequences, and outreach.",
+  "description": "ACA, Agent-operable outbound: cold email, LinkedIn automation, buying signals, lead magnets, content farm, and cheap BYO-API cold-email infra. Connect once via MCP to run leads, lists, sequences, and campaigns from your agent so you can book meetings and make more sales.",
   "author": {
     "name": "ACA"
   },
   "homepage": "https://aca.so/product/integrations/mcp",
   "repository": "https://github.com/seguelaCedric/aca-native-mcp-skills",
   "license": "MIT",
-  "keywords": ["aca", "mcp", "outbound", "cold-email", "linkedin", "lead-generation", "sales", "crm"],
+  "keywords": [
+    "aca",
+    "mcp",
+    "outbound",
+    "cold-email",
+    "linkedin",
+    "lead-generation",
+    "sales",
+    "crm"
+  ],
   "variables": {
     "type": "object",
     "properties": {
       "ACA_API_KEY": {
         "type": "string",
         "title": "ACA MCP API key",
-        "description": "Create a key in ACA under Settings → MCP / API (aca_mcp_sk_live_…)."
+        "description": "Create a key in ACA under Settings \u2192 MCP / API (aca_mcp_sk_live_\u2026)."
       }
     },
-    "required": ["ACA_API_KEY"]
+    "required": [
+      "ACA_API_KEY"
+    ]
   }
 }
