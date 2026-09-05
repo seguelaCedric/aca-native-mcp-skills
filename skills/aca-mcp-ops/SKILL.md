@@ -8,10 +8,14 @@ description: >-
 
 Use this whenever an agent needs to operate Automated Client Acquisition through MCP.
 
+## The rule for bots
+One agent, one job, narrow scope. Prefer deterministic tool calls and scripts for structured ACA ops; use the model for unstructured judgment only. Keep a human on irreversible actions (activate campaign, bulk enroll, send at scale, spend) until the error rate earns autonomy. Support a morning drift check on org, ICP, sequences, and mailbox health.
+
 ## Connect
 - Prefer the installed ACA connector when available.
 - Production MCP URL: `https://www.automatedclientacquisition.com/api/mcp`
 - Auth: Bearer API key from ACA **Settings → MCP / API** (never commit or paste keys into skills, repos, or chat logs).
+- Lead enrichment: MoltSets or QuickEnrich API key required when enriching contacts.
 
 ## Before mutating
 1. Call `get_help` (or list tools) if unsure of the current schema.

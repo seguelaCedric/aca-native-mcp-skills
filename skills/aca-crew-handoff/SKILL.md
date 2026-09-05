@@ -8,12 +8,21 @@ description: >-
 
 Use this when running or coordinating a multi-agent ACA outbound crew so work moves stage-to-stage without skipping gates.
 
+## The rule for bots (non-negotiable)
+
+- **One agent, one job, narrow scope.**
+- Use **deterministic code** everywhere the task is deterministic; use the **model only** where the input is genuinely unstructured.
+- Keep a **human at every irreversible action** (send, publish, activate, spend, bulk enroll) until the error rate has earned autonomy.
+- Run a **drift check every morning** (ICP, prompts, campaign settings, mailbox health, handoff packet quality).
+
+Fence that follows: reading / researching / drafting can run; sending / publishing / activating / spending wait for approval until earned autonomy.
+
 ## Chain (default)
 1. **Head of Sales** — who to target and why (ICP, segments, priorities)
 2. **Signal Hunter** — find real buying intent (funding, hiring, competitor engagement, launches, leadership moves)
 3. **ICP Analyst** — filter bad fits against the active ICP
 4. **Account Researcher** — company + prospect angle, pain, trigger, stakeholders
-5. **Lead Enricher** — emails, phones, missing fields (never invent contacts)
+5. **Lead Enricher** — emails, phones, missing fields (never invent contacts; needs MoltSets or QuickEnrich API key)
 6. **Intent Scorer** — rank likelihood to buy; park low-intent
 7. **LinkedIn Copywriter** — personalised messages from research + score
 8. **Outreach Operator** — launch/manage campaigns in ACA (confirm before large activations)
