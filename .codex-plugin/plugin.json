@@ -4,9 +4,9 @@
   "description": "Agent skills for Automated Client Acquisition: define ICPs, build audiences, launch outreach, manage deliverability, create content, and optimize campaigns through one ACA MCP connection.",
   "author": {
     "name": "ACA",
-    "url": "https://aca.so"
+    "url": "https://www.automatedclientacquisition.com"
   },
-  "homepage": "https://aca.so/product/integrations/mcp",
+  "homepage": "https://www.automatedclientacquisition.com/mcp",
   "repository": "https://github.com/seguelaCedric/aca-native-mcp-skills",
   "license": "MIT",
   "keywords": [
@@ -31,7 +31,7 @@
       "Write",
       "Interactive"
     ],
-    "websiteURL": "https://aca.so/product/integrations/mcp",
+    "websiteURL": "https://www.automatedclientacquisition.com/mcp",
     "defaultPrompt": [
       "Run ACA kickoff for my workspace.",
       "Find and launch an ACA campaign.",

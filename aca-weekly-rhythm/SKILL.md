@@ -6,7 +6,7 @@ compatibility: Requires the ACA MCP server connected with a valid bearer token. 
 metadata:
   author: ACA
   version: "1.0"
-  homepage: https://aca.so/product/integrations/mcp
+  homepage: https://www.automatedclientacquisition.com/mcp
 ---
 
 # ACA weekly rhythm

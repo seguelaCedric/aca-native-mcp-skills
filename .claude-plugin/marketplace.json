@@ -1,27 +1,41 @@
 {
   "name": "aca-native-mcp-skills",
   "owner": {
-    "name": "ACA",
-    "email": "support@aca.so"
+    "name": "Automated Client Acquisition",
+    "email": "support@automatedclientacquisition.com",
+    "url": "https://www.automatedclientacquisition.com"
   },
   "metadata": {
-    "description": "Agent skills for Automated Client Acquisition: audience building, outreach, deliverability, content, replies, and weekly optimization.",
-    "version": "1.1.1"
+    "description": "Official Automated Client Acquisition plugin for Claude: cold email, LinkedIn outreach and lead generation through one OAuth sign-in.",
+    "version": "1.2.3"
   },
   "plugins": [
     {
       "name": "aca-native-mcp-skills",
       "source": "./",
-      "description": "Run ACA workflows through one native ACA MCP connection.",
-      "version": "1.1.0",
+      "description": "Run cold email, LinkedIn outreach and lead generation from Claude. Define your ICP, build lead lists, launch campaigns, check deliverability, triage replies and create content in your ACA workspace. One sign-in, no API keys.",
+      "version": "1.2.3",
       "keywords": [
-        "aca",
-        "mcp",
+        "cold-email",
         "outbound",
+        "lead-generation",
+        "linkedin-outreach",
+        "prospecting",
         "sales",
+        "crm",
+        "deliverability",
+        "email-sequences",
         "content"
       ],
-      "category": "productivity"
+      "category": "sales",
+      "author": {
+        "name": "Automated Client Acquisition",
+        "email": "support@automatedclientacquisition.com",
+        "url": "https://www.automatedclientacquisition.com"
+      },
+      "homepage": "https://www.automatedclientacquisition.com/mcp",
+      "repository": "https://github.com/seguelaCedric/aca-native-mcp-skills",
+      "license": "MIT"
     }
   ]
 }

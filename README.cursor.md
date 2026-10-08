@@ -1,6 +1,6 @@
 # ACA — Automated Client Acquisition (Cursor plugin)
 
-Official **MCP-first** Cursor marketplace connector for [Automated Client Acquisition](https://aca.so/product/integrations/mcp). Connect Cursor agents to ACA’s MCP so they can help manage leads, lists, sequences, and outreach.
+Official **MCP-first** Cursor marketplace connector for [Automated Client Acquisition](https://www.automatedclientacquisition.com/mcp). Connect Cursor agents to ACA’s MCP so they can help manage leads, lists, sequences, and outreach.
 
 Agent skills (deeper playbooks) ship in a **follow-up release**. This package focuses on the MCP connection.
 
@@ -42,7 +42,7 @@ Connect ACA MCP first, then use these skills for outbound and multi-agent crew h
 
 ## Links
 
-- Homepage: [https://aca.so/product/integrations/mcp](https://aca.so/product/integrations/mcp)
+- Homepage: [https://www.automatedclientacquisition.com/mcp](https://www.automatedclientacquisition.com/mcp)
 - Repository: [https://github.com/seguelaCedric/aca-native-mcp-skills](https://github.com/seguelaCedric/aca-native-mcp-skills)
 - License: MIT
 
