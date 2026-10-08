@@ -10,28 +10,24 @@ Agent skills (deeper playbooks) ship in a **follow-up release**. This package fo
 
 1. Open Cursor → Marketplace (or install from the listing once published).
 2. Install the **ACA** plugin.
-3. When prompted, set **ACA MCP API key** (`ACA_API_KEY`).
+3. When the ACA server first connects, sign in to ACA in the browser window Cursor opens (OAuth).
 
 ### Local / development
 
 1. Clone or copy this plugin into a folder Cursor can load as a local plugin.
 2. Ensure `.cursor-plugin/plugin.json` and `mcp.json` are present at the package root.
-3. Configure the `ACA_API_KEY` variable (see below).
+3. Enable the **aca** MCP server and sign in when prompted.
 
-## Configure `ACA_API_KEY`
+## Authentication
 
-1. In ACA, open **Settings → MCP / API**.
-2. Create an API key (format: `aca_mcp_sk_live_…`).
-3. Paste it into the plugin’s **ACA MCP API key** field when installing, or set the `ACA_API_KEY` variable in your Cursor plugin / MCP config.
-
-Never commit real keys to git or paste them into docs.
+ACA uses OAuth. Cursor opens an ACA sign-in the first time the `aca` server connects; no API key is needed or stored.
 
 ## What the MCP connection does
 
 This plugin registers the **aca** MCP server:
 
-- **URL:** `https://www.automatedclientacquisition.com/api/mcp`
-- **Auth:** `Authorization: Bearer ${ACA_API_KEY}`
+- **URL:** `https://mcp.automatedclientacquisition.com/mcp`
+- **Auth:** OAuth (sign in to ACA when prompted)
 
 Once connected, Cursor agents can use ACA MCP tools (subject to your account permissions) for outbound and CRM-adjacent workflows—leads, lists, sequences, and outreach—without embedding secrets in the repo.
 

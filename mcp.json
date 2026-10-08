@@ -1,10 +1,8 @@
 {
   "mcpServers": {
     "aca": {
-      "url": "https://www.automatedclientacquisition.com/api/mcp",
-      "headers": {
-        "Authorization": "Bearer ${ACA_API_KEY}"
-      }
+      "type": "http",
+      "url": "https://mcp.automatedclientacquisition.com/mcp"
     }
   }
 }

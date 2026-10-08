@@ -17,18 +17,5 @@
     "lead-generation",
     "sales",
     "crm"
-  ],
-  "variables": {
-    "type": "object",
-    "properties": {
-      "ACA_API_KEY": {
-        "type": "string",
-        "title": "ACA MCP API key",
-        "description": "Create a key in ACA under Settings \u2192 MCP / API (aca_mcp_sk_live_\u2026)."
-      }
-    },
-    "required": [
-      "ACA_API_KEY"
-    ]
-  }
+  ]
 }

@@ -161,7 +161,7 @@ Add the ACA MCP server to your runtime. Runtimes that support OAuth will prompt 
 }
 ```
 
-If your runtime does not support OAuth, create an ACA MCP API key under Settings -> MCP / API and send it as an `Authorization: Bearer` header.
+Authentication is OAuth only: the first tool call opens an ACA sign-in, and no API key is stored on your machine.
 
 If you manage multiple client workspaces, the skills use `list_accessible_organizations` and `switch_organization` so the agent operates in the right ACA org.
 

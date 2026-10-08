@@ -13,8 +13,8 @@ One agent, one job, narrow scope. Prefer deterministic tool calls and scripts fo
 
 ## Connect
 - Prefer the installed ACA connector when available.
-- Production MCP URL: `https://www.automatedclientacquisition.com/api/mcp`
-- Auth: Bearer API key from ACA **Settings → MCP / API** (never commit or paste keys into skills, repos, or chat logs).
+- Production MCP URL: `https://mcp.automatedclientacquisition.com/mcp`
+- Auth: OAuth. The runtime prompts the user to sign in to ACA on first use; never ask for, commit, or paste API keys or tokens.
 - Lead enrichment: MoltSets or QuickEnrich API key required when enriching contacts.
 
 ## Before mutating
