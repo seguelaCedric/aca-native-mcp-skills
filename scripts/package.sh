@@ -21,9 +21,10 @@ cp -R "$root/.codex-plugin" "$package_dir/"
 cp -R "$root/.claude-plugin" "$package_dir/"
 cp -R "$root/scripts" "$package_dir/"
 
-for skill_dir in "$root"/aca-*; do
+mkdir -p "$package_dir/skills"
+for skill_dir in "$root"/skills/*; do
   [[ -d "$skill_dir" && -f "$skill_dir/SKILL.md" ]] || continue
-  cp -R "$skill_dir" "$package_dir/"
+  cp -R "$skill_dir" "$package_dir/skills/"
 done
 
 mkdir -p "$dist"

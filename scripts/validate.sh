@@ -25,9 +25,12 @@ for (const file of [
 }
 NODE
 
+echo "Checking skills only use connector tools..."
+node "$root/scripts/check-tools.mjs"
+
 echo "Validating skills..."
 count=0
-for skill_file in "$root"/aca-*/SKILL.md; do
+for skill_file in "$root"/skills/*/SKILL.md; do
   [[ -e "$skill_file" ]] || continue
   npx --yes skills-ref validate "$(dirname -- "$skill_file")" >/dev/null
   count=$((count + 1))

@@ -1,152 +1,126 @@
 ---
 name: aca-kickoff
-description: Guided start-here orchestrator for ACA. Use when the user is new, wants to set up ACA, wants an outbound/content launch plan, says "start here", "set up my ACA workspace", "launch my first campaign", or asks what to do next. Uses one native ACA MCP connection for product, ICP, brand voice, lead sourcing, outreach, content, and status routing.
+description: Guided start-here orchestrator for ACA. Use when the user is new, wants to set up ACA, wants an outbound/content launch plan, says "start here", "set up my ACA workspace", "launch my first campaign", or asks what to do next. Reads the workspace stage, fills the gaps that block a first campaign, and routes to the next skill.
 license: MIT
-compatibility: Requires the ACA MCP server connected with a valid bearer token. All provider credentials and org scoping are handled by ACA MCP.
+compatibility: Requires the ACA connector (OAuth sign-in, no API key).
 metadata:
   author: ACA
-  version: "1.0"
+  version: "1.1"
   homepage: https://www.automatedclientacquisition.com/mcp
 ---
 
 # ACA kickoff
 
-This is the guided entry point for running ACA through an agent. It turns a vague goal into a concrete ACA workspace plan and routes the user to the next skill.
+The guided entry point for running ACA through an agent. It turns a vague goal into a concrete next action in the user's ACA workspace, then routes to the right skill.
 
 ## Rules
 
-- Use ACA MCP only. Do not ask for vendor API keys or run direct SQL/API calls.
-- Confirm before creating missing foundation records if the user did not explicitly ask you to set them up.
-- Confirm before spending import budget, activating campaigns, or publishing content.
-- If multiple organizations are available, ask the user which org to use, then call `switch_organization`.
-- If you switch organizations, switch back to the original org before finishing unless the user asks to stay there.
+- Use the ACA connector only. Never ask for vendor API keys or run SQL/API calls.
+- Never invent prospects, emails, companies, or results. Contacts come from the user or from ACA.
+- Ask before creating anything in ACA unless the user explicitly asked you to set it up.
+- Campaigns are created as inactive drafts. Activation, sending, imports, and connecting LinkedIn or mailboxes happen in the ACA app; give the link.
+- Mention a paid plan only if a tool result includes `plan.upgrade` or `plan_note`, and only for the step the user wants.
+- The connection is bound to one workspace. If the user wants a different one, they switch their active workspace in ACA and reconnect.
 
 ## Workflow
 
-### 1. Select org and current context
+### 1. Read the workspace
 
-Call `list_accessible_organizations`.
+Call `get_started`. Note `workspace`, `stage`, `counts`, `plan`, and `next_steps`.
 
-If there is more than one org, ask which one to use and call `switch_organization`. Then inspect the current setup:
+If `get_started` is not available, call `get_workspace`, `list_lead_lists`, `list_campaigns`, and `list_sequences` and infer the stage yourself: nothing set up (new), contacts or lists but no sender or campaign (setting up), lists plus a campaign draft (ready to launch), an active campaign (live).
 
-- `list_products`
-- `list_icps`
-- `list_brand_voices`
-- `list_sender_accounts` for likely channels (`linkedin`, `email`, `whatsapp`, `instagram`)
-- `list_email_mailboxes`
-- `list_lead_lists`
-- `list_blueprints`
-- `list_publishing_accounts`
+If the stage is `new`, open with three lines before anything else: ACA is one platform for cold email (instead of Smartlead or Instantly), LinkedIn automation (instead of HeyReach), content, lead magnets, buying signals, mailbox infrastructure and integrations; from here you can set up the workspace and draft campaigns, and the rest happens in the ACA app; `/aca` lists every command. Then continue.
+
+If the stage is `live`, skip to step 5 and route to `aca-pipeline-status`.
 
 ### 2. Clarify the launch brief
 
-Get the missing pieces in one concise exchange:
+Ask only for what ACA does not already show, in one short message:
 
-- Offer/product being sold
+- Offer being sold and the main outcome (book meetings, sell a service, grow a lead magnet list)
 - Ideal buyer and disqualifiers
-- Main outcome or CTA (book meetings, sell service, drive lead magnet, grow audience)
-- Preferred channels (LinkedIn, email, multi-channel, content, or all)
-- Target list size and geography
-- Brand voice/tone
+- Preferred channel (LinkedIn, email, or both)
+- Where prospects come from: a list the user already has, or new prospects to find
 
-Skip questions when the answer already exists in ACA and only confirm the selected record.
+### 3. Close the first gap
 
-### 3. Create missing foundations
+Work the first item in `next_steps`, in this order of priority:
 
-If the workspace lacks a needed product, ICP, or brand voice, create it through MCP:
+- **`define_offer_and_icp`**: draft a one-paragraph offer and a short ICP (titles, company size, industry, geography, disqualifiers, pains). Show it in chat. The user saves it in ACA at `/assets?tab=products` and `/assets?tab=icps`.
+- **`add_prospects`**: if the user pastes or uploads people they already have, confirm the count and fields, then add them with `bulk_create_contacts` (100 per call). To find new prospects, help write the search criteria, then send them to `/list-building` or `/leads/import`. Never generate contacts yourself.
+- **`create_lead_list`**: propose a list name and purpose, then `create_lead_list` and `add_contacts_to_list` after the user approves.
+- **`connect_sender`**: explain that ACA sends from the user's own LinkedIn account or mailbox, connected at `/accounts` or `/email/mailboxes`.
+- **`draft_campaign`**: hand off to `aca-launch-outreach`.
 
-- `create_product`
-- `create_icp`
-- `create_brand_voice`
-- `set_product_icp_fit` when both product and ICP exist
+Do one gap per turn unless the user asks you to keep going.
 
-Keep these records practical. Do not over-model. The first pass should be enough to launch, not a brand strategy dissertation.
+### 4. Write the operating plan
 
-### 4. Save the operating plan
-
-Create a concise launch plan with `create_strategy_document`. Include:
-
-- Product
-- ICP
-- Channel path
-- Lead source plan
-- Campaign angle
-- Content support plan
-- Risks / missing setup
-- Next recommended skill
+Summarize the plan in chat (offer, ICP, channel, lead source, campaign angle, what's missing, next skill). Offer to save it; the user can store it at `/assets?tab=strategies`.
 
 ### 5. Route to the next skill
 
-Choose exactly one primary next step:
+Pick exactly one:
 
-- No audience yet: run `aca-find-leads`
-- Audience exists but quality is uncertain: run `aca-lead-quality`
-- Campaign-ready audience and senders exist: run `aca-launch-outreach`
-- Need nurture/social proof first: run `aca-content-week`
-- Already running campaigns: run `aca-pipeline-status`
+- No offer or ICP yet: `aca-icp-onboarding`
+- No prospects yet: `aca-find-leads`
+- Prospects exist, quality unknown: `aca-lead-quality`
+- Lead list and sender ready: `aca-launch-outreach`
+- Wants nurture or social proof first: `aca-content-week`
+- Campaigns already live: `aca-pipeline-status`
 
-If the user says "do it" or gives an explicit launch instruction, continue into the selected workflow. Otherwise, stop with the plan and next action.
+If the user said "do it", continue into that skill. Otherwise stop with the handoff block.
 
 ## Output format
 
 ```text
-ACA kickoff complete.
+ACA kickoff
 
-Org: {org_name}
-Product: {product_name}
-ICP: {icp_name}
-Primary path: {LinkedIn/email/multi-channel/content}
-Ready:
-- {ready_item}
+Workspace: {workspace} ({stage})
+Have: {contacts} contacts, {lead_lists} lists, {campaigns} campaigns, {sender_accounts} LinkedIn, {mailboxes} mailboxes
+Done now:
+- {what was created or drafted}
 
-Needs setup:
-- {missing_item}
+Still needed:
+- {missing item} → {tool or app link}
 
-Plan saved: {strategy_document_id}
 Next: {skill_name} - {why}
 ```
 
 ## Skill chaining
 
-This skill participates in the ACA chain. Preserve the selected ACA org, relevant IDs, user brief, approval state, and any generated artifacts when continuing into another ACA skill. If the user asked for execution and a downstream condition is met, continue into the next skill automatically; otherwise end with the handoff block.
-
-**Upstream**
-- Entry point for new workspaces, vague goals, or first campaigns.
+Preserve the workspace, relevant IDs, the user's brief, and approval state when continuing into another ACA skill.
 
 **Auto-continue conditions**
-- No product/ICP exists -> continue to `aca-icp-onboarding`.
-- No audience exists -> continue to `aca-find-leads`.
-- Audience exists but quality is unknown -> continue to `aca-lead-quality`.
-- Campaign-ready audience and senders exist -> continue to `aca-launch-outreach`.
-- The user asks for nurture or social proof -> continue to `aca-content-week`.
+- No offer or ICP: continue to `aca-icp-onboarding`.
+- No prospects: continue to `aca-find-leads`.
+- Prospects exist, quality unknown: continue to `aca-lead-quality`.
+- Lead list and sender ready: continue to `aca-launch-outreach`.
+- User asks for nurture or social proof: continue to `aca-content-week`.
 
 **Stop before chaining when**
-- Ask before creating foundation records unless the user already asked you to set up the workspace.
-- Ask before imports, campaign activation, or publishing.
-
-**Downstream skills**
-- `aca-icp-onboarding` - create missing product/ICP foundation.
-- `aca-find-leads` - build the first audience.
-- `aca-lead-quality` - clean/segment an existing list.
-- `aca-launch-outreach` - create the first campaign.
-- `aca-content-week` - generate content support.
-- `aca-pipeline-status` - inspect an already-running workspace.
+- Creating records the user has not approved.
+- The next step happens in the ACA app (connecting senders, imports, activation).
 
 **Handoff block**
 
 ```text
 Chain state: {continue|needs_approval|blocked|complete}
 Next skill: {aca-skill-name|none}
-Reason: {why this handoff is or is not needed}
-Carry forward: {org_id/name, product_id, icp_id, lead_list_id, campaign_id, sequence_id, job_id, approvals, constraints}
+Reason: {why}
+Carry forward: {workspace, stage, lead_list_id, campaign_id, approvals, constraints}
 ```
 
 ## ACA tools used
 
-- `list_accessible_organizations`, `switch_organization`
-- `list_products`, `create_product`
-- `list_icps`, `create_icp`, `set_product_icp_fit`
-- `list_brand_voices`, `create_brand_voice`
-- `list_sender_accounts`, `list_email_mailboxes`
-- `list_lead_lists`, `list_blueprints`, `list_publishing_accounts`
-- `create_strategy_document`
+- `get_started`, `get_workspace`
+- `list_lead_lists`, `create_lead_list`, `add_contacts_to_list`
+- `bulk_create_contacts`
+- `list_campaigns`, `list_sequences`
+
+## ACA app pages
+
+- Offer and ICP: `https://www.automatedclientacquisition.com/assets?tab=products`, `?tab=icps`
+- Find prospects: `https://www.automatedclientacquisition.com/list-building`, `/leads/import`
+- Connect senders: `https://www.automatedclientacquisition.com/accounts`, `/email/mailboxes`

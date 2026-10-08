@@ -1,12 +1,16 @@
 ---
-name: ACA crew roles
-description: >-
-  Use this when creating, briefing, or reviewing specialized ACA sales-crew
-  agent roles and their job boundaries.
+name: aca-crew-roles
+description: Use this when creating, briefing, or reviewing specialized ACA sales-crew agent roles and their job boundaries.
+license: MIT
+compatibility: Requires the ACA connector (OAuth sign-in, no API key).
+metadata:
+  author: ACA
+  version: "1.1"
+  homepage: https://www.automatedclientacquisition.com/mcp
 ---
 # ACA crew roles
 
-Use this when spinning up or briefing agents so each has one job and clear handoffs. All roles use ACA MCP when connected. Never invent contact data.
+Use this when spinning up or briefing agents so each has one job and clear handoffs. All roles use the ACA connector when connected; start with `get_started`. Never invent contact data.
 
 ## The rule for bots (non-negotiable)
 
@@ -32,7 +36,7 @@ Filters bad fits against the active ICP. Passes fits to Account Researcher; reje
 Researches company + prospect (angle, pain, trigger, stakeholders). Attaches notes via ACA. Hands to Lead Enricher and Intent Scorer.
 
 ### Lead Enricher
-Finds emails, phones, missing fields via ACA plus MoltSets or QuickEnrich (API key required). Never fabricates. Hands complete contacts to Intent Scorer and Copywriter.
+Finds emails, phones, missing fields via ACA enrichment (list-building or campaign enrichment steps, set up in the app). Never fabricates. Hands complete contacts to Intent Scorer and Copywriter.
 
 ### Intent Scorer
 Ranks likelihood to buy. Tags/scores in ACA. Hands high-intent to Copywriter and Outreach Operator; parks low-intent.

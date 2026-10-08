@@ -1,8 +1,12 @@
 ---
-name: ACA crew handoff
-description: >-
-  Use this when coordinating the ACA multi-agent sales crew handoffs from signal
-  to meeting.
+name: aca-crew-handoff
+description: Use this when coordinating the ACA multi-agent sales crew handoffs from signal to meeting.
+license: MIT
+compatibility: Requires the ACA connector (OAuth sign-in, no API key).
+metadata:
+  author: ACA
+  version: "1.1"
+  homepage: https://www.automatedclientacquisition.com/mcp
 ---
 # ACA crew handoff
 
@@ -18,19 +22,19 @@ Use this when running or coordinating a multi-agent ACA outbound crew so work mo
 Fence that follows: reading / researching / drafting can run; sending / publishing / activating / spending wait for approval until earned autonomy.
 
 ## Chain (default)
-1. **Head of Sales** — who to target and why (ICP, segments, priorities)
-2. **Signal Hunter** — find real buying intent (funding, hiring, competitor engagement, launches, leadership moves)
-3. **ICP Analyst** — filter bad fits against the active ICP
-4. **Account Researcher** — company + prospect angle, pain, trigger, stakeholders
-5. **Lead Enricher** — emails, phones, missing fields (never invent contacts; needs MoltSets or QuickEnrich API key)
-6. **Intent Scorer** — rank likelihood to buy; park low-intent
-7. **LinkedIn Copywriter** — personalised messages from research + score
-8. **Outreach Operator** — launch/manage campaigns in ACA (confirm before large activations)
-9. **Reply Agent** — classify replies (interest / objection / OOO)
-10. **Follow-up Agent** — keep warm opportunities alive
-11. **Meeting Qualifier** — qualify before calendar
-12. **Pipeline Analyst** — what ICPs, signals, and messages convert
-13. **Sales Manager** — unblock stages, assign handoffs, report status
+1. **Head of Sales**: who to target and why (ICP, segments, priorities)
+2. **Signal Hunter**: find real buying intent (funding, hiring, competitor engagement, launches, leadership moves)
+3. **ICP Analyst**: filter bad fits against the active ICP
+4. **Account Researcher**: company + prospect angle, pain, trigger, stakeholders
+5. **Lead Enricher**: emails, phones, missing fields (never invent contacts; enrichment runs in ACA at /list-building or as campaign steps)
+6. **Intent Scorer**: rank likelihood to buy; park low-intent
+7. **LinkedIn Copywriter**: personalised messages from research + score
+8. **Outreach Operator**: launch/manage campaigns in ACA (confirm before large activations)
+9. **Reply Agent**: classify replies (interest / objection / OOO)
+10. **Follow-up Agent**: keep warm opportunities alive
+11. **Meeting Qualifier**: qualify before calendar
+12. **Pipeline Analyst**: what ICPs, signals, and messages convert
+13. **Sales Manager**: unblock stages, assign handoffs, report status
 
 ## Handoff rules
 - Pass a short structured packet: who, company, signal/source, ICP fit, research notes, contact confidence, score, next owner.

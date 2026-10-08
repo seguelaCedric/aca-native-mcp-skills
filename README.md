@@ -1,22 +1,38 @@
 # Automated Client Acquisition for Claude
 
-**Run your outbound from Claude: ICP, lead lists, cold email, LinkedIn outreach, deliverability, replies and content. One sign-in, no API keys.**
+**One platform for client acquisition, run from Claude. One sign-in, no API keys.**
 
-Tell Claude what you sell and who you sell to. It builds the ICP, pulls matching leads, writes the sequence, checks your senders and launches the campaign in your ACA workspace. It asks before anything goes live or spends credits.
+## What ACA replaces
+
+| Instead of | ACA gives you |
+| --- | --- |
+| Smartlead / Instantly | Cold email sequences, mailbox rotation, warmup, and deliverability monitoring |
+| HeyReach | LinkedIn automation across multiple sender accounts, with a unified inbox |
+| Separate content tools | Content blueprints and autopilots for LinkedIn, X, Instagram and more |
+| Lead-magnet tools | Comment-to-DM lead magnets on LinkedIn and Instagram |
+| Signal tools | Buying signals (funding, hiring, engagement) feeding your lists |
+| Mailbox infrastructure vendors | Microsoft 365 sending tenants and your own mail stack |
+| Glue code | CRM, webhooks, GoHighLevel and Notion integrations, native n8n nodes, a CLI, and this MCP connector |
+
+## What Claude does, and what happens in ACA
+
+From Claude: check your workspace and what to do next, define your offer and ICP, search your contacts, build lead lists, draft LinkedIn campaigns and lead magnets, read campaign results, triage replies, write sequences and copy, and plan and generate content.
+
+In the ACA app (Claude gives you the exact link): connect LinkedIn accounts and mailboxes, find new prospects in ACA's lead database or import them, build and enroll email sequences, activate campaigns, and run autopilots. Nothing goes live or spends credits without your approval.
 
 ## Get started in 2 minutes
 
 1. Install the plugin from the Claude directory.
-2. When Claude asks, click **Connect** and sign in to your ACA account. No API key, no config file.
-3. Say: **"Set up ACA for my business"**. The `aca-kickoff` skill walks you through product, ICP, brand voice and your first campaign.
+2. When Claude asks, click **Connect** and sign in to ACA (a free account works). No API key, no config file.
+3. Run **`/aca`** for the overview and every command, or **`/aca-kickoff`** to set up your workspace step by step.
 
-No ACA account yet? [Start here](https://www.automatedclientacquisition.com/pricing).
+Every command is documented at [automatedclientacquisition.com/mcp/commands](https://www.automatedclientacquisition.com/mcp/commands).
 
 ## Try these prompts
 
-- "Build an ICP for UK recruitment agencies and find 200 matching leads."
-- "Write a 4-step cold email sequence for this list in our brand voice."
-- "Check my sender health before I launch."
+- "What should I do next in ACA?"
+- "Draft an ICP for UK recruitment agencies and the search criteria to find them."
+- "Write a 4-step cold email sequence for this offer."
 - "Show today's replies and draft answers that book a call."
 - "Turn this case study into 5 LinkedIn posts."
 

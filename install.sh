@@ -69,13 +69,13 @@ if [[ "$runtime" == "all" && -n "$target" ]]; then
 fi
 
 skill_dirs=()
-for skill_file in "$script_dir"/aca-*/SKILL.md; do
+for skill_file in "$script_dir"/skills/*/SKILL.md; do
   [[ -e "$skill_file" ]] || continue
   skill_dirs+=("$(dirname -- "$skill_file")")
 done
 
 if [[ ${#skill_dirs[@]} -eq 0 ]]; then
-  echo "No aca-* skill folders found next to install.sh." >&2
+  echo "No skill folders found in skills/ next to install.sh." >&2
   exit 1
 fi
 

@@ -2,83 +2,106 @@
 name: aca-auto-research
 description: "Autonomous ACA research loop for finding the next best action. Use when the user asks the agent to research opportunities, find gaps, run the outbound research loop, or decide what ACA should do next."
 license: MIT
-compatibility: Requires the ACA MCP server connected with a valid bearer token.
+compatibility: Requires the ACA connector (OAuth sign-in, no API key).
 metadata:
   author: ACA
-  version: "1.0"
+  version: "1.1"
   homepage: https://www.automatedclientacquisition.com/mcp
 ---
 
 # ACA auto research
 
-Review the workspace, identify the biggest bottleneck, and route to the right ACA workflow.
+Review the connected workspace, name the single biggest bottleneck with evidence, and route to the ACA skill that fixes it.
 
 ## Rules
 
-- Start read-only.
-- Do not launch, import, publish, or pause without approval.
+- Use the ACA connector only. Never ask for vendor API keys or run SQL/API calls.
+- Start read-only. Do not create anything without approval, unless the user explicitly asked for autonomous execution and the downstream skill allows it.
+- Launching, importing, activating, pausing, and publishing happen in the ACA app. Give the link.
+- Never invent data. Evidence is counts and records exactly as returned. `get_campaign_metrics` returns stored counts, never rates.
 - Prefer one recommendation over a long list.
+- Mention a paid plan only if a tool result includes `plan_note` or `plan.upgrade`.
 
 ## Workflow
 
-1. Run an operating scan:
-   - `list_campaigns`
-   - `list_lead_lists`
-   - `list_generation_jobs`
-   - `list_autopilots`
-   - `list_email_mailboxes`
-   - `list_sender_accounts`
-   - `list_products`
-   - `list_icps`
-2. Identify the bottleneck:
-   - No ICP/product: `aca-icp-onboarding`
-   - No audience: `aca-find-leads`
-   - Low list quality: `aca-lead-quality`
-   - No campaign: `aca-campaign-strategy`
-   - Copy issue: `aca-campaign-copywriting`
-   - Sender issue: `aca-sender-health`
-   - Content gap: `aca-content-week`
-3. Save the research note with `create_strategy_document`.
-4. Continue into the selected workflow if the user asked for autonomous execution.
+### 1. Operating scan
+
+Call `get_started` first. Its `stage`, `counts`, and `next_steps` usually point straight at the bottleneck. If it is unavailable, call `get_workspace` and infer the stage from the list calls.
+
+Then read what the stage calls for:
+
+- `list_lead_lists`
+- `list_campaigns`, plus `get_campaign_metrics` for active campaigns
+- `list_sequences`
+- `search_conversations` with `has_inbound_message: true`
+- `list_lead_magnets`
+- `list_content_ideas`, `list_content_generation_jobs`
+
+### 2. Identify the bottleneck
+
+Work down this order and stop at the first that applies:
+
+| Evidence | Bottleneck | Route |
+| --- | --- | --- |
+| `get_started` shows 0 ICPs or 0 products | No foundation | `aca-icp-onboarding` |
+| 0 contacts or no lead list | No audience | `aca-find-leads` |
+| Lists exist but contacts lack emails, titles, or fit | Low list quality | `aca-lead-quality` |
+| 0 connected LinkedIn accounts and 0 mailboxes | No sender | `aca-sender-health` (connect at `/accounts`, `/email/mailboxes`) |
+| Lists and sender ready, no campaign | No campaign | `aca-campaign-strategy` |
+| Active campaigns progressing but few inbound conversations | Copy issue | `aca-campaign-copywriting` |
+| Active campaigns with little or no progression in stored counts | Sender or send issue | `aca-sender-health` |
+| Replies waiting unanswered | Reply backlog | `aca-positive-reply-scoring` |
+| Few ideas and no recent generation jobs | Content gap | `aca-content-week` |
+
+Mailbox and sender health details are not available through the connector. When the evidence points there, say so and send the user to `/email/analytics` alongside the skill.
+
+### 3. Write the research note
+
+Write it in chat: bottleneck, evidence (with the exact counts), recommended skill, why now. Offer to let the user save it at `/assets?tab=strategies`.
+
+### 4. Continue
+
+If the user asked for autonomous execution, continue into the selected skill. Otherwise end with the handoff block.
 
 ## Output format
 
 ```text
-Auto research result:
+Auto research result
+Workspace: {workspace} ({stage})
 Main bottleneck: {bottleneck}
-Evidence: {evidence}
+Evidence: {counts and records as returned}
 Recommended next skill: {skill}
 Why now: {reason}
-Plan saved: {strategy_document_id}
 ```
 
 ## Skill chaining
 
-This skill participates in the ACA chain. Preserve the selected ACA org, relevant IDs, user brief, approval state, and any generated artifacts when continuing into another ACA skill. If the user asked for execution and a downstream condition is met, continue into the next skill automatically; otherwise end with the handoff block.
+Preserve the workspace, relevant IDs, the user's brief, and approval state when continuing into another ACA skill. If the user asked for execution and a downstream condition is met, continue into the next skill; otherwise end with the handoff block.
 
 **Upstream**
-- Entry point for autonomous “figure out what to do next” requests or called by `aca-pipeline-status`.
+- Entry point for "figure out what to do next" requests, or called by `aca-pipeline-status`.
 
 **Auto-continue conditions**
-- No product/ICP -> continue to `aca-icp-onboarding`.
-- No audience -> continue to `aca-find-leads`.
-- Low list quality -> continue to `aca-lead-quality`.
-- No campaign strategy -> continue to `aca-campaign-strategy`.
-- Copy issue -> continue to `aca-campaign-copywriting`.
-- Sender issue -> continue to `aca-sender-health`.
-- Content gap -> continue to `aca-content-week`.
+- No product or ICP: continue to `aca-icp-onboarding`.
+- No audience: continue to `aca-find-leads`.
+- Low list quality: continue to `aca-lead-quality`.
+- No campaign strategy: continue to `aca-campaign-strategy`.
+- Copy issue: continue to `aca-campaign-copywriting`.
+- Sender issue: continue to `aca-sender-health`.
+- Content gap: continue to `aca-content-week`.
 
 **Stop before chaining when**
-- Ask before any downstream mutation unless the user explicitly requested autonomous execution.
+- The downstream skill would create records and the user did not ask for autonomous execution.
+- The fix happens in the ACA app (connecting senders, imports, activation).
 
 **Downstream skills**
-- `aca-icp-onboarding` - fix foundation.
-- `aca-find-leads` - source leads.
-- `aca-lead-quality` - fix list quality.
-- `aca-campaign-strategy` - plan campaign.
-- `aca-campaign-copywriting` - fix copy.
-- `aca-sender-health` - fix sender blockers.
-- `aca-content-week` - refill content.
+- `aca-icp-onboarding`: fix the foundation.
+- `aca-find-leads`: source leads.
+- `aca-lead-quality`: fix list quality.
+- `aca-campaign-strategy`: plan the campaign.
+- `aca-campaign-copywriting`: fix copy.
+- `aca-sender-health`: fix sender blockers.
+- `aca-content-week`: refill content.
 
 **Handoff block**
 
@@ -86,12 +109,21 @@ This skill participates in the ACA chain. Preserve the selected ACA org, relevan
 Chain state: {continue|needs_approval|blocked|complete}
 Next skill: {aca-skill-name|none}
 Reason: {why this handoff is or is not needed}
-Carry forward: {org_id/name, product_id, icp_id, lead_list_id, campaign_id, sequence_id, job_id, approvals, constraints}
+Carry forward: {workspace, stage, counts, lead_list_id, campaign_id, sequence_id, approvals, constraints}
 ```
 
 ## ACA tools used
 
-- `list_campaigns`, `list_lead_lists`, `list_generation_jobs`, `list_autopilots`
-- `list_email_mailboxes`, `list_sender_accounts`
-- `list_products`, `list_icps`
-- `create_strategy_document`
+- `get_started`, `get_workspace`
+- `list_lead_lists`
+- `list_campaigns`, `get_campaign_metrics`
+- `list_sequences`
+- `search_conversations`
+- `list_lead_magnets`
+- `list_content_ideas`, `list_content_generation_jobs`
+
+## ACA app pages
+
+- Connect senders: `https://www.automatedclientacquisition.com/accounts`, `/email/mailboxes`
+- Deliverability: `https://www.automatedclientacquisition.com/email/analytics`
+- Save the research note: `https://www.automatedclientacquisition.com/assets?tab=strategies`

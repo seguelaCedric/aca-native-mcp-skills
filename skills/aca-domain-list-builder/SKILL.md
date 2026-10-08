@@ -2,60 +2,93 @@
 name: aca-domain-list-builder
 description: "Build ACA account and contact lists from company domains, company keywords, or account constraints. Use when the user has a target account list, company keyword list, domain list, or wants contacts at specific companies."
 license: MIT
-compatibility: Requires the ACA MCP server connected with a valid bearer token.
+compatibility: Requires the ACA connector (OAuth sign-in, no API key).
 metadata:
   author: ACA
-  version: "1.0"
+  version: "1.1"
   homepage: https://www.automatedclientacquisition.com/mcp
 ---
 
 # ACA domain list builder
 
-Turn account constraints into a usable lead list.
+Turn a target account list into a usable lead list: first by collecting contacts already in ACA, then by sending the user to source the gaps.
 
 ## Rules
 
-- If the user provides domains, do not invent contacts at those domains.
-- Use existing CRM search first, then ACA import/search tools.
-- Confirm before fresh imports.
-- Keep source notes so list origin is clear.
+- If the user provides domains, never invent contacts at those domains.
+- Search existing ACA contacts first, then source what is missing.
+- The connector cannot search ACA's lead database or run imports. Write the spec for the missing accounts and send the user to `/list-building` or `/leads/import`.
+- Ask before creating lists or adding contacts.
+- Keep source notes so the list's origin is clear (list name and description).
+- Mention a paid plan only if a tool result includes `plan.upgrade` or `plan_note`.
 
 ## Workflow
 
-1. Parse the source: domains, company names, company keywords, industries, size, roles, and geography.
-2. Search existing contacts with `search_contacts_and_leads`.
-3. Search lead pool with `search_lead_pool` using company keywords and account constraints.
-4. If needed, use `start_apify_leads_import` with company keywords, role filters, and size/geography filters.
-5. Create a destination list with `create_lead_list` and add existing contacts with `add_contacts_to_list`, or use the import job's list.
-6. Verify with `get_lead_list` and route to `aca-lead-quality`.
+### 1. Read the workspace
+
+Call `get_started` (fallback: `get_workspace`, `list_lead_lists`).
+
+### 2. Parse the account source
+
+Normalize the input into a clean table: domain, company name, and any constraints given (industry, size, geography), plus the target roles per account. Strip `www.`, protocols, and paths from domains, and dedupe.
+
+### 3. Match existing contacts
+
+For each account, call `search_contacts` by company name or domain. Record per account: contacts found, and whether they match the target roles. Use `get_contact` when the role or channel is unclear.
+
+Split accounts into **covered** (at least one target-role contact) and **gaps** (none).
+
+### 4. Build the destination list
+
+Propose a list name and description that records the source (for example "Q3 target accounts - from Sales domain list"). After approval, `create_lead_list` and `add_contacts_to_list` with the matching contacts.
+
+### 5. Source the gaps
+
+For gap accounts, write a spec:
+
+```text
+Account sourcing spec: {list name}
+Where: /list-building (database) | /leads/import (LinkedIn or CSV)
+Companies / domains: {gap accounts}
+Roles: {titles, seniority}
+Contacts per account: {n}
+Exclude: {roles, already-covered accounts}
+```
+
+If the user later pastes contacts for these accounts, confirm and add them with `bulk_create_contacts` (100 per call), then `add_contacts_to_list`.
+
+### 6. Verify
+
+Check the final list with `get_lead_list` and route to `aca-lead-quality`.
 
 ## Output format
 
 ```text
 Domain/account list:
 Input accounts: {n}
-Existing contacts found: {n}
-New import needed: {yes/no}
-List: {list_id}
+Covered by existing contacts: {n} ({contacts} contacts)
+Gaps to source: {n} -> {app page}
+List: {list_id, count}
 Next: aca-lead-quality
 ```
 
 ## Skill chaining
 
-This skill participates in the ACA chain. Preserve the selected ACA org, relevant IDs, user brief, approval state, and any generated artifacts when continuing into another ACA skill. If the user asked for execution and a downstream condition is met, continue into the next skill automatically; otherwise end with the handoff block.
+Preserve the workspace, the account table, relevant IDs, and approval state when continuing into another ACA skill. If the user asked for execution and a downstream condition is met, continue automatically; otherwise end with the handoff block.
 
 **Upstream**
-- Called when `aca-find-leads` detects account/domain constraints or the user provides company/domain lists.
+- Called when `aca-find-leads` detects account or domain constraints, or the user provides company or domain lists.
 
 **Auto-continue conditions**
-- After building the list -> continue to `aca-lead-quality`.
-- If contacts are missing channel data -> continue to `aca-email-sequence-manager` or `aca-launch-outreach` with `find_email`/`analyze_contact` steps.
+- List exists in ACA: continue to `aca-lead-quality`.
+- Contacts are missing channel data: continue to `aca-launch-outreach`, noting that email finding or enrichment steps are set up in the campaign at `/campaigns/{id}`.
 
 **Stop before chaining when**
-- Ask before importing new contacts for a large account list.
+- Gap accounts still have to be sourced in the ACA app.
+- Creating lists or adding contacts the user has not approved.
 
 **Downstream skills**
-- `aca-lead-quality` - grade account/contact fit.
+- `aca-lead-quality` - grade account and contact fit.
 - `aca-campaign-strategy` - create account-based messaging.
 - `aca-launch-outreach` - launch once sender and copy are ready.
 
@@ -65,12 +98,16 @@ This skill participates in the ACA chain. Preserve the selected ACA org, relevan
 Chain state: {continue|needs_approval|blocked|complete}
 Next skill: {aca-skill-name|none}
 Reason: {why this handoff is or is not needed}
-Carry forward: {org_id/name, product_id, icp_id, lead_list_id, campaign_id, sequence_id, job_id, approvals, constraints}
+Carry forward: {workspace, account table, gap accounts, lead_list_id, approvals, constraints}
 ```
 
 ## ACA tools used
 
-- `search_contacts_and_leads`
-- `search_lead_pool`, `build_lead_pool_list`, `get_lead_pool_build_job`
-- `start_apify_leads_import`, `get_apify_leads_import_job`
-- `create_lead_list`, `add_contacts_to_list`, `get_lead_list`
+- `get_started`, `get_workspace`
+- `search_contacts`, `get_contact`, `bulk_create_contacts`
+- `list_lead_lists`, `get_lead_list`, `create_lead_list`, `add_contacts_to_list`
+
+## ACA app pages
+
+- Database search: `https://www.automatedclientacquisition.com/list-building`
+- LinkedIn or CSV import: `https://www.automatedclientacquisition.com/leads/import`

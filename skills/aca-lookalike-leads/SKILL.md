@@ -2,59 +2,95 @@
 name: aca-lookalike-leads
 description: "Build lookalike lead lists in ACA from a winning customer, lead list, campaign, or contact segment. Use when the user asks for more leads like these, clones of a customer profile, or lookalike prospecting."
 license: MIT
-compatibility: Requires the ACA MCP server connected with a valid bearer token.
+compatibility: Requires the ACA connector (OAuth sign-in, no API key).
 metadata:
   author: ACA
-  version: "1.0"
+  version: "1.1"
   homepage: https://www.automatedclientacquisition.com/mcp
 ---
 
 # ACA lookalike leads
 
-Use an existing winning segment to create a new prospect list.
+Use an existing winning segment in ACA to define a new prospect audience. The connector reads the seed; the search for new lookalikes runs in the ACA app.
 
 ## Rules
 
-- Search ACA's lead pool before running paid/fresh imports.
-- Confirm before materializing large lists or starting imports.
-- State what traits are being copied and what traits are excluded.
+- Use the ACA connector only. Never invent people, companies, or counts.
+- Derive traits only from data ACA returns or the user provides. State which traits are copied and which are excluded.
+- The connector cannot search ACA's lead database or run imports. Turn the traits into a search spec, then send the user to `/list-building` or `/leads/import`.
+- Ask before creating lists or adding contacts.
+- Mention a paid plan only if a tool result includes `plan.upgrade` or `plan_note`.
 
 ## Workflow
 
-1. Identify the seed source:
-   - `get_lead_list`
-   - `search_contacts_and_leads`
-   - `get_campaign` / `list_campaign_leads`
-2. Extract shared traits: role, seniority, industry, geography, size, keywords, channel availability, score, and tags.
-3. Build a filter and preview with `search_lead_pool`.
-4. If pool results fit, create the list with `build_lead_pool_list` and poll `get_lead_pool_build_job`.
-5. If pool is thin, use `start_apify_leads_import` or `start_linkedin_import` after approval.
-6. Verify with `get_lead_list` and route to `aca-lead-quality`.
+### 1. Read the workspace
+
+Call `get_started` (fallback: `get_workspace`, `list_lead_lists`, `list_campaigns`).
+
+### 2. Identify the seed
+
+- A lead list: `list_lead_lists`, then `get_lead_list`
+- A set of contacts (customers, tagged winners, replied leads): `search_contacts`, then `get_contact` for detail on a sample
+- A winning campaign: `list_campaigns`, `get_campaign`, and `get_campaign_metrics` to confirm it actually performed; then use the lead list it targets if the result shows one
+
+Work from a sample of 20 to 50 seed contacts. If the seed is under 10 people, say the traits are directional.
+
+### 3. Extract shared traits
+
+Look for what most of the seed has in common:
+
+- Role and seniority
+- Industry and keywords
+- Geography
+- Company size
+- Channel availability (email, LinkedIn)
+- Tags and stage
+
+Separate **copied traits** (shared by most of the seed) from **excluded traits** (noise, one-offs, or things the user wants to avoid, such as current customers or competitors).
+
+### 4. Write the lookalike spec
+
+```text
+Lookalike spec: {list name}
+Seed: {list or segment, n contacts}
+Where: /list-building (database) | /leads/import (LinkedIn)
+Copied traits: {roles, seniority, industry, geo, size, channel}
+Excluded: {traits, existing customers, seed companies}
+Target count: {n}
+```
+
+Send the user to `/list-building` first; use `/leads/import` with a LinkedIn search when the database is thin or the seed is LinkedIn-native. Remind them to exclude seed companies so the new list is net new.
+
+### 5. Pick up and verify
+
+When the user says the list is built, find it with `list_lead_lists` and check it with `get_lead_list`. Compare the sample against the copied traits, then route to `aca-lead-quality`.
 
 ## Output format
 
 ```text
 Lookalike list plan:
-Seed: {seed}
+Seed: {seed} ({n} contacts reviewed)
 Copied traits: {traits}
 Excluded traits: {exclusions}
-Preview count: {count}
-Next: {build/poll/quality}
+Build at: {app page}
+Built list: {list_id, count | pending}
+Next: {aca-lead-quality | wait for build}
 ```
 
 ## Skill chaining
 
-This skill participates in the ACA chain. Preserve the selected ACA org, relevant IDs, user brief, approval state, and any generated artifacts when continuing into another ACA skill. If the user asked for execution and a downstream condition is met, continue into the next skill automatically; otherwise end with the handoff block.
+Preserve the workspace, seed IDs, the lookalike spec, and approval state when continuing into another ACA skill. If the user asked for execution and a downstream condition is met, continue automatically; otherwise end with the handoff block.
 
 **Upstream**
 - Called when `aca-find-leads`, `aca-positive-reply-scoring`, or `aca-weekly-rhythm` finds a winning segment.
 
 **Auto-continue conditions**
-- After creating a lookalike list -> continue to `aca-lead-quality`.
-- If the lookalike is based on reply winners -> continue to `aca-experiment-design` after scoring.
+- Lookalike list exists in ACA: continue to `aca-lead-quality`.
+- Lookalike is based on reply winners: continue to `aca-experiment-design` after quality scoring.
 
 **Stop before chaining when**
-- Ask before large builds or fresh imports.
+- The build or import still has to run in the ACA app.
+- Creating lists the user has not approved.
 
 **Downstream skills**
 - `aca-lead-quality` - validate lookalike quality.
@@ -67,12 +103,17 @@ This skill participates in the ACA chain. Preserve the selected ACA org, relevan
 Chain state: {continue|needs_approval|blocked|complete}
 Next skill: {aca-skill-name|none}
 Reason: {why this handoff is or is not needed}
-Carry forward: {org_id/name, product_id, icp_id, lead_list_id, campaign_id, sequence_id, job_id, approvals, constraints}
+Carry forward: {workspace, seed lead_list_id or campaign_id, lookalike spec, new lead_list_id, approvals, constraints}
 ```
 
 ## ACA tools used
 
-- `get_lead_list`, `search_contacts_and_leads`, `get_contact`
-- `get_campaign`, `list_campaign_leads`
-- `search_lead_pool`, `build_lead_pool_list`, `get_lead_pool_build_job`
-- `start_apify_leads_import`, `start_linkedin_import`
+- `get_started`, `get_workspace`
+- `list_lead_lists`, `get_lead_list`
+- `search_contacts`, `get_contact`
+- `list_campaigns`, `get_campaign`, `get_campaign_metrics`
+
+## ACA app pages
+
+- Database search: `https://www.automatedclientacquisition.com/list-building`
+- LinkedIn or CSV import: `https://www.automatedclientacquisition.com/leads/import`

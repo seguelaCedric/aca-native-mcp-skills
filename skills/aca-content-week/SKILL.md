@@ -1,24 +1,28 @@
 ---
 name: aca-content-week
-description: Generate a week of on-brand content for an ACA org. Use when the user says "generate this week's content", "I need [N] LinkedIn posts about [topic]", "write a content batch", "fill the content queue", "make ad creatives for [product]", or asks for multi-piece content tied to a brand voice. Uses ACA blueprints and publishing tools through one native ACA MCP connection.
+description: Generate a week of on-brand content in ACA. Use when the user says "generate this week's content", "I need [N] LinkedIn posts about [topic]", "write a content batch", "fill the content queue", "make ad creatives for [product]", or asks for multi-piece content tied to a brand voice. Plans ideas, matches them to an ACA blueprint, and starts generation through the ACA connector.
 license: MIT
-compatibility: Requires the ACA MCP server connected with a valid bearer token. The ACA org should have at least one brand voice and one blueprint configured for the requested format.
+compatibility: Requires the ACA connector (OAuth sign-in, no API key).
 metadata:
   author: ACA
-  version: "1.0"
+  version: "1.1"
   homepage: https://www.automatedclientacquisition.com/mcp
 ---
 
 # Generate a week of content in ACA
 
-ACA's content engine produces on-brand assets through blueprints. This skill creates an idea batch, triggers generation jobs, tracks them, and optionally schedules completed outputs.
+ACA's content engine produces on-brand assets through blueprints. This skill plans an idea batch, saves it, starts generation on a matching active blueprint, and tracks the jobs. Scheduling and publishing happen in the ACA app.
 
 ## Rules
 
-- Use ACA MCP only.
-- Do not publish or schedule content without approval.
-- Match the requested format to an actual blueprint. Do not silently use the wrong pipeline.
-- For long-running video jobs, set expectations and poll no faster than every 30 seconds.
+- Use the ACA connector only. Never ask for vendor API keys or run SQL/API calls.
+- Ask before any write. Show the idea batch before `create_content_ideas`.
+- Match the requested format to a real blueprint and its pipeline. Never silently use the wrong one.
+- `start_content_generation` only runs on an active blueprint, sends prompts to AI providers, and consumes billable credits that cannot be undone. Confirm the blueprint, pipeline, item count, and that it costs credits before every call.
+- A blueprint created here with `create_blueprint` is an inactive draft. The user reviews and activates it at `/blueprints/{id}` before it can generate.
+- Generated content stays unapproved and unpublished. Approval, autopilots, scheduling, and publishing happen at `/autopilots` and `/publish-queue`.
+- For long-running video jobs, set expectations and check `list_content_generation_jobs` no faster than every 30 seconds.
+- Mention a paid plan only if a tool result includes `plan_note` or `plan.upgrade`.
 
 ## Workflow
 
@@ -27,93 +31,88 @@ ACA's content engine produces on-brand assets through blueprints. This skill cre
 Capture:
 
 - Format: LinkedIn posts, tweets, carousels, videos, ads, articles
-- Topic/theme
+- Topic or theme
 - Count (default 5 for a week)
-- Product/ICP context
-- Brand voice
-- Whether to auto-approve generation stages
+- Offer and buyer context
+- Brand voice to match
 
-### 2. Select library context
+Call `get_started` to see whether the workspace has products and ICPs. Brand voice and product details are not readable through the connector; if the user has not described them, ask for a short summary or route to `aca-icp-onboarding`.
 
-Call:
+### 2. Pick the blueprint
 
-- `list_brand_voices`
-- `list_products`
-- `list_icps`
-- `list_blueprints`
-- `list_publishing_accounts` if scheduling is requested
+Call `list_blueprints` (use `active_only: true` when you only want ones that can generate now), then `get_blueprint` on the likely match to confirm its pipeline and purpose.
 
-Pick the blueprint that actually matches the requested pipeline.
+Connector pipelines: `social_media_post`, `rich_article`, `instagram_carousel`, `image_only`, `ugc_video`, `generative_video_oneshot`, `video_script`, `storyboard_video_longform`.
 
-### 3. Create the idea pool
+- Active blueprint matches: use it.
+- Only an inactive match exists: tell the user to activate it at `/blueprints/{id}`.
+- No match: draft a blueprint in chat (name, description, pipeline, master prompt). After approval, call `create_blueprint`; it lands as an inactive draft for the user to review and activate.
 
-Call `bulk_create_ideas` with slightly more ideas than needed. Each idea should include:
+### 3. Build the idea batch
+
+Call `list_content_ideas` to avoid duplicating existing ideas. Draft slightly more ideas than needed. Each idea has:
 
 - Short title
 - Keywords
-- Key talking points
-- Emotional trigger or angle
-- Product/ICP/brand voice IDs when available
+- Content framework (for example: contrarian take, story, how-to, teardown, listicle)
+- Emotional triggers or angle
 
-If the user wants control, show the idea list and ask which to keep. If they asked for speed, proceed.
+Show the batch and ask which to keep. After approval, call `create_content_ideas` (up to 25 per call).
 
-### 4. Trigger generation
+### 4. Start generation
 
-Call `trigger_content_generation` with:
+Confirm cost first: "This starts {N} items on {blueprint} ({pipeline}) and uses billable credits. Go?"
 
-- `blueprint_id`
-- `pipeline`
-- `items`
-- `library_elements`
-- `output_config`
-- `auto_approve`
+After a clear yes, call `start_content_generation` with `blueprint_id`, `pipeline`, and `items` (up to 10 per call; each item carries an `idea_id` or `idea_title`).
 
-Track jobs with `list_generation_jobs` and `get_generation_job`. Valid status buckets include queued, processing, review, completed, and failed.
+Track progress with `list_content_generation_jobs`. Report statuses as returned.
 
-### 5. Optional scheduling
+### 5. Review and schedule in the app
 
-After jobs complete, ask before scheduling. Then call `push_to_ghl` with account IDs from `list_publishing_accounts`.
+Generated pieces are unapproved and unpublished. Send the user to review them, then schedule or publish at `/publish-queue`, or set up a recurring autopilot at `/autopilots`.
 
-Suggested defaults if the user does not specify:
+Suggested posting slots if the user asks:
 
-- LinkedIn: Tue-Thu, 8am or 12pm user-local
-- X/Twitter: Mon-Fri, 9am or 3pm user-local
-- Instagram: Wed-Sun, 11am or 7pm user-local
+- LinkedIn: Tue to Thu, 8am or 12pm user-local
+- X/Twitter: Mon to Fri, 9am or 3pm user-local
+- Instagram: Wed to Sun, 11am or 7pm user-local
 
 ## Output format
 
 ```text
-Content batch started: {theme}
-Format: {format}
-Brand voice: {brand_voice}
-Blueprint: {blueprint}
+Content batch: {theme}
+Format: {format} ({pipeline})
+Blueprint: {blueprint} ({active|draft, activate at /blueprints/{id}})
+Ideas saved: {N}
 
 Jobs:
 - {job_id}: {idea_title} - {status}
 
-Next: {track / approve / schedule}
+Next: {track | review and schedule at /publish-queue | activate blueprint}
 ```
 
 ## Skill chaining
 
-This skill participates in the ACA chain. Preserve the selected ACA org, relevant IDs, user brief, approval state, and any generated artifacts when continuing into another ACA skill. If the user asked for execution and a downstream condition is met, continue into the next skill automatically; otherwise end with the handoff block.
+Preserve the workspace, relevant IDs, the user's brief, and approval state when continuing into another ACA skill. If the user asked for execution and a downstream condition is met, continue into the next skill; otherwise end with the handoff block.
 
 **Upstream**
-- Called by `aca-kickoff`, `aca-weekly-rhythm`, `aca-auto-research`, or content-support campaign plans.
+- Called by `aca-kickoff`, `aca-weekly-rhythm`, `aca-auto-research`, `aca-lead-magnet-brainstorm`, or campaign plans that need supporting content.
 
 **Auto-continue conditions**
-- No brand/product/ICP context -> continue to `aca-icp-onboarding`.
-- Jobs are launched -> continue to `aca-pipeline-status` for tracking.
-- Content supports outbound offer -> continue to `aca-campaign-strategy`.
+- No offer, ICP, or brand context: continue to `aca-icp-onboarding`.
+- Jobs started: continue to `aca-pipeline-status` for tracking.
+- Content supports an outbound offer: continue to `aca-campaign-strategy`.
 
 **Stop before chaining when**
-- Ask before publishing or scheduling content.
+- Saving ideas or creating a blueprint the user has not approved.
+- Starting billable generation without a confirmed yes.
+- The next step is approval, scheduling, or publishing (app only).
 
 **Downstream skills**
-- `aca-icp-onboarding` - create missing content context.
-- `aca-pipeline-status` - track generation jobs.
-- `aca-campaign-strategy` - use content as campaign support.
-- `aca-weekly-rhythm` - add content into the operating cadence.
+- `aca-icp-onboarding`: create missing context.
+- `aca-pipeline-status`: track generation jobs.
+- `aca-campaign-strategy`: use content as campaign support.
+- `aca-weekly-rhythm`: add content into the operating cadence.
 
 **Handoff block**
 
@@ -121,13 +120,19 @@ This skill participates in the ACA chain. Preserve the selected ACA org, relevan
 Chain state: {continue|needs_approval|blocked|complete}
 Next skill: {aca-skill-name|none}
 Reason: {why this handoff is or is not needed}
-Carry forward: {org_id/name, product_id, icp_id, lead_list_id, campaign_id, sequence_id, job_id, approvals, constraints}
+Carry forward: {workspace, blueprint_id, pipeline, idea_ids, job_id, approvals, constraints}
 ```
 
 ## ACA tools used
 
-- `list_brand_voices`, `list_products`, `list_icps`
-- `list_blueprints`, `get_blueprint`
-- `bulk_create_ideas`
-- `trigger_content_generation`, `list_generation_jobs`, `get_generation_job`
-- `list_publishing_accounts`, `push_to_ghl`
+- `get_started`
+- `list_blueprints`, `get_blueprint`, `create_blueprint`
+- `list_content_ideas`, `create_content_ideas`
+- `start_content_generation`, `list_content_generation_jobs`
+
+## ACA app pages
+
+- Edit or activate a blueprint: `https://www.automatedclientacquisition.com/blueprints/{id}`
+- Review, schedule, publish: `https://www.automatedclientacquisition.com/publish-queue`
+- Autopilots: `https://www.automatedclientacquisition.com/autopilots`
+- Brand voice and products: `https://www.automatedclientacquisition.com/assets?tab=brands`, `?tab=products`

@@ -2,63 +2,92 @@
 name: aca-competitor-engagers
 description: "Source prospects around competitors, alternatives, and category keywords using ACA-native lead sources. Use when the user asks for competitor engagers, users of competitor tools, people talking about a competitor, or alternative-to campaigns."
 license: MIT
-compatibility: Requires the ACA MCP server connected with a valid bearer token.
+compatibility: Requires the ACA connector (OAuth sign-in, no API key).
 metadata:
   author: ACA
-  version: "1.0"
+  version: "1.1"
   homepage: https://www.automatedclientacquisition.com/mcp
 ---
 
 # ACA competitor engagers
 
-Build an audience around competitor signals without requiring separate scraping credentials in the skill.
+Build an audience around competitor and category signals. This skill designs the targeting and the angle; the search or import runs in the ACA app.
 
 ## Rules
 
-- Be explicit when exact post-engager scraping is unavailable through the current ACA MCP toolset.
-- Prefer category keywords, competitor company names, role filters, and LinkedIn imports.
-- Confirm before fresh imports.
-- Avoid hostile competitor messaging.
+- Be explicit that the connector cannot scrape post engagers or run searches. Exact engager lists come from a LinkedIn import the user runs at `/leads/import`.
+- Prefer category keywords, competitor company names, and role filters over vague interest signals.
+- Never invent people, companies, or counts.
+- Ask before creating lists or adding contacts.
+- Avoid hostile competitor messaging. Position as an alternative, never as an attack.
+- Mention a paid plan only if a tool result includes `plan.upgrade` or `plan_note`.
 
 ## Workflow
 
-1. Clarify competitor names, category terms, geography, target roles, and exclusion terms.
-2. Search ACA lead pool with competitor/category `keyword` and relevant filters.
-3. If needed, use:
-   - `search_linkedin_parameters`
-   - `build_linkedin_search_url`
-   - `start_linkedin_import`
-   - `start_apify_leads_import`
-4. Create or verify the list.
-5. Route to `aca-campaign-strategy` for a respectful "alternative to" angle.
+### 1. Read the workspace
+
+Call `get_started` (fallback: `get_workspace`, `list_lead_lists`).
+
+### 2. Clarify the competitive frame
+
+Ask for competitor names, category terms, geography, target roles, and exclusion terms (the user's own customers, partners, competitor employees).
+
+### 3. Pick the source path and write the spec
+
+Offer the paths that fit, in order of precision:
+
+- **Engagers on a competitor post or page**: the user brings the post or page URL to `/leads/import` and runs a LinkedIn import.
+- **People at companies using the competitor**: a database search at `/list-building` with the competitor or tool name as a keyword plus role and size filters.
+- **Category audience**: a database search or LinkedIn search import using category keywords ("CRM for agencies", "cold email tool") plus roles.
+
+```text
+Competitor audience spec: {list name}
+Path: {engager import | tool users | category audience}
+Where: /leads/import | /list-building
+Competitors / category terms: {terms}
+Roles: {titles}
+Geography / size: {filters}
+Exclude: {competitor employees, existing customers, partners}
+Target count: {n}
+```
+
+### 4. Pick up and verify
+
+When the user says the import or build is done, find the list with `list_lead_lists` and check it with `get_lead_list`. Use `search_contacts` to spot competitor employees or existing customers that slipped in, and flag them for exclusion.
+
+### 5. Recommend the angle
+
+Draft a respectful "alternative to" angle in chat: what the competitor does well, the gap the user fills, and a low-friction ask. Then route to `aca-lead-quality`, followed by `aca-campaign-strategy`.
 
 ## Output format
 
 ```text
 Competitor audience:
 Competitors/categories: {terms}
-Source path: {lead_pool/linkedin/apify}
-Preview: {count}
-List: {list_id}
+Source path: {engager import / tool users / category audience}
+Build at: {app page}
+List: {list_id, count | pending}
 Recommended angle: {angle}
+Next: {skill}
 ```
 
 ## Skill chaining
 
-This skill participates in the ACA chain. Preserve the selected ACA org, relevant IDs, user brief, approval state, and any generated artifacts when continuing into another ACA skill. If the user asked for execution and a downstream condition is met, continue into the next skill automatically; otherwise end with the handoff block.
+Preserve the workspace, the audience spec, the angle, relevant IDs, and approval state when continuing into another ACA skill. If the user asked for execution and a downstream condition is met, continue automatically; otherwise end with the handoff block.
 
 **Upstream**
-- Called by `aca-find-leads` or campaign planning for competitor/category audiences.
+- Called by `aca-find-leads` or campaign planning for competitor or category audiences.
 
 **Auto-continue conditions**
-- After audience creation -> continue to `aca-lead-quality`.
-- After quality scoring -> continue to `aca-campaign-strategy` for a respectful alternative angle.
+- Audience list exists in ACA: continue to `aca-lead-quality`.
+- After quality scoring: continue to `aca-campaign-strategy` for a respectful alternative angle.
 
 **Stop before chaining when**
-- Ask before fresh imports and avoid hostile competitor messaging.
+- The import or build still has to run in the ACA app.
+- Copy drifts toward hostile competitor messaging.
 
 **Downstream skills**
-- `aca-lead-quality` - clean the competitor/category audience.
+- `aca-lead-quality` - clean the competitor or category audience.
 - `aca-campaign-strategy` - build the alternative-to campaign.
 - `aca-campaign-copywriting` - write non-hostile copy.
 
@@ -68,12 +97,16 @@ This skill participates in the ACA chain. Preserve the selected ACA org, relevan
 Chain state: {continue|needs_approval|blocked|complete}
 Next skill: {aca-skill-name|none}
 Reason: {why this handoff is or is not needed}
-Carry forward: {org_id/name, product_id, icp_id, lead_list_id, campaign_id, sequence_id, job_id, approvals, constraints}
+Carry forward: {workspace, audience spec, angle, lead_list_id, approvals, constraints}
 ```
 
 ## ACA tools used
 
-- `search_lead_pool`, `build_lead_pool_list`, `get_lead_pool_build_job`
-- `search_linkedin_parameters`, `build_linkedin_search_url`, `start_linkedin_import`, `get_linkedin_import_job`
-- `start_apify_leads_import`, `get_apify_leads_import_job`
-- `get_lead_list`
+- `get_started`, `get_workspace`
+- `list_lead_lists`, `get_lead_list`
+- `search_contacts`
+
+## ACA app pages
+
+- LinkedIn import (post engagers, searches): `https://www.automatedclientacquisition.com/leads/import`
+- Database search: `https://www.automatedclientacquisition.com/list-building`

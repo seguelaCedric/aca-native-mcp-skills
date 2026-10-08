@@ -1,91 +1,105 @@
 ---
 name: aca-weekly-rhythm
-description: Weekly ACA operating cadence for outbound and content. Use when the user asks for a weekly review, operating rhythm, campaign optimization, experiment planning, Monday/Wednesday/Friday workflow, or "what should I do this week in ACA". Uses ACA MCP status, campaign, content, and strategy tools.
+description: Weekly ACA operating cadence for outbound and content. Use when the user asks for a weekly review, operating rhythm, campaign optimization, experiment planning, Monday/Wednesday/Friday workflow, or "what should I do this week in ACA". Reads campaign, reply, list, lead magnet, and content status through the ACA connector and produces a weekly plan.
 license: MIT
-compatibility: Requires the ACA MCP server connected with a valid bearer token. Mutations require explicit user approval.
+compatibility: Requires the ACA connector (OAuth sign-in, no API key).
 metadata:
   author: ACA
-  version: "1.0"
+  version: "1.1"
   homepage: https://www.automatedclientacquisition.com/mcp
 ---
 
 # ACA weekly rhythm
 
-This skill turns ACA from a launch tool into an operating system. It reviews the pipeline, identifies one or two high-leverage changes, and records the plan.
+This skill turns ACA from a launch tool into an operating system. It reviews the pipeline, picks one or two high-leverage changes, and writes the week's plan.
 
 ## Rules
 
-- Start read-only.
-- Do not pause campaigns, activate campaigns, publish content, or change sequences without approval.
+- Use the ACA connector only. Never ask for vendor API keys or run SQL/API calls.
+- Start read-only. Ask before any write.
+- Report counts exactly as returned. `get_campaign_metrics` returns stored counts, never rates. Only state a rate when the matching denominator came back too, and show both numbers.
+- Never invent metrics, replies, or results.
+- Pausing, resuming, or editing campaigns and sequences, running autopilots, and publishing happen in the ACA app. Recommend the change and give the link.
 - Prefer one controlled experiment at a time.
-- Keep the output operational: what changed, what to do next, and who/what is blocked.
+- Keep the output operational: what changed, what to do next, and what is blocked.
+- Mention a paid plan only if a tool result includes `plan_note` or `plan.upgrade`.
 
 ## Workflow
 
 ### 1. Run the brief
 
-Collect:
+Call `get_started` first (fallback: `get_workspace`). Then read in parallel:
 
-- `list_campaigns`
-- `list_campaign_leads` for active campaigns when needed
-- `list_email_sequences` and `list_email_enrollments` for email performance
-- `list_email_mailboxes`
-- `list_linkedin_import_jobs` and `list_apify_leads_import_jobs`
-- `list_generation_jobs`
-- `list_autopilots`
-- `list_pool_entries`
+- `list_campaigns`, then `get_campaign_metrics` for each active campaign
+- `search_conversations` with `has_inbound_message: true` for replies
+- `list_sequences`
+- `list_lead_lists`
+- `list_lead_magnets`
+- `list_content_ideas` and `list_content_generation_jobs`
+
+Mailbox and sender health are not available through the connector. Use the mailbox and LinkedIn counts from `get_started` and point to `/email/mailboxes` and `/email/analytics` for health.
 
 ### 2. Diagnose by cadence
 
-**Monday - plan and refill**
+**Monday: plan and refill**
 
-- Check if lead lists are low
-- Check if content queue is light
-- Choose campaign/list/content priorities for the week
+- Lead lists behind active campaigns that are small or exhausted
+- Content queue light (few unused ideas, no recent generation jobs)
+- Choose campaign, list, and content priorities for the week
 - Route to `aca-find-leads` or `aca-content-week` when needed
 
-**Wednesday - experiment and unblock**
+**Wednesday: experiment and unblock**
 
-- Check campaigns with low activity or stalled sends
+- Active campaigns with little progression in their stored counts
+- Replies waiting more than a day
 - Pick one experiment: audience, hook, channel, offer, or timing
-- Draft the change, then ask before applying it
+- Draft the change in chat; the user applies it at `/campaigns/{id}` or `/email/sequences`
 
-**Friday - review and clean**
+**Friday: review and clean**
 
-- Summarize wins, replies, failed jobs, and list quality problems
-- Identify contacts/lists to suppress or enrich
-- Save learnings to a strategy document
+- Summarize wins, replies, failed generation jobs, and list quality problems
+- Identify contacts to tag, re-stage, or suppress (route to `aca-positive-reply-scoring` for replies)
+- Write the weekly note
 
-### 3. Save the weekly note
+### 3. Write the weekly note
 
-Use `create_strategy_document` to record:
+Write it in chat with:
 
-- Week/date
-- Metrics snapshot
+- Week and date
+- Metrics snapshot (stored counts as returned)
 - Decisions
 - Experiment hypothesis
-- Next actions
+- Next actions with owner and link
+
+Offer to let the user save it at `/assets?tab=strategies`.
 
 ### 4. Optional actions
 
-Only after approval:
+Only after approval, through the owning skill:
 
-- Create/refill a lead list through `aca-find-leads`
-- Create a campaign through `aca-launch-outreach`
-- Generate content through `aca-content-week`
-- Pause/resume campaigns with `update_campaign_status`
-- Trigger an autopilot with `trigger_autopilot`
+- Refill a lead list: `aca-find-leads`
+- Draft a new campaign: `aca-launch-outreach`
+- Add ideas or generate content: `aca-content-week`
+- Tag or re-stage replying contacts: `aca-positive-reply-scoring`
+
+App-only, give the link:
+
+- Pause or resume a campaign: `/campaigns/{id}`
+- Turn a sequence on or off: `/email/sequences`
+- Run or pause an autopilot: `/autopilots`
 
 ## Output format
 
 ```text
 ACA Weekly Rhythm - {week}
+Workspace: {workspace} ({stage})
 
 Status:
-- Campaigns: {summary}
+- Campaigns: {summary with stored counts}
+- Replies: {N with inbound messages, N waiting on you}
 - Leads: {summary}
-- Content: {summary}
-- Automation: {summary}
+- Content: {ideas, jobs}
+- Senders: {N LinkedIn, N mailboxes}; health at /email/analytics
 
 This week's priority:
 {one priority}
@@ -93,38 +107,37 @@ This week's priority:
 Experiment:
 Hypothesis: {hypothesis}
 Change: {change}
-Metric: {metric}
+Metric: {metric, as a stored count with its denominator}
 
 Actions:
-1. {action}
-2. {action}
-
-Saved note: {strategy_document_id}
+1. {action} → {skill or app link}
+2. {action} → {skill or app link}
 ```
 
 ## Skill chaining
 
-This skill participates in the ACA chain. Preserve the selected ACA org, relevant IDs, user brief, approval state, and any generated artifacts when continuing into another ACA skill. If the user asked for execution and a downstream condition is met, continue into the next skill automatically; otherwise end with the handoff block.
+Preserve the workspace, relevant IDs, the user's brief, and approval state when continuing into another ACA skill. If the user asked for execution and a downstream condition is met, continue into the next skill; otherwise end with the handoff block.
 
 **Upstream**
 - Called by the user on a weekly cadence or after `aca-pipeline-status`.
 
 **Auto-continue conditions**
-- Lead pool is low -> continue to `aca-find-leads`.
-- Content queue is low -> continue to `aca-content-week`.
-- Replies need review -> continue to `aca-positive-reply-scoring`.
-- A test is needed -> continue to `aca-experiment-design`.
-- Campaign/sender issue exists -> continue to `aca-deliverability-incident-response`.
+- Lead lists running low: continue to `aca-find-leads`.
+- Content queue low: continue to `aca-content-week`.
+- Replies need review: continue to `aca-positive-reply-scoring`.
+- A test is needed: continue to `aca-experiment-design`.
+- Campaign or sender issue: continue to `aca-deliverability-incident-response`.
 
 **Stop before chaining when**
-- Ask before changing live campaigns, publishing, or importing.
+- The next step changes live campaigns, publishes, or imports. Those happen in the app.
+- Creating records the user has not approved.
 
 **Downstream skills**
-- `aca-find-leads` - refill audience.
-- `aca-content-week` - refill content.
-- `aca-positive-reply-scoring` - learn from replies.
-- `aca-experiment-design` - plan the next test.
-- `aca-deliverability-incident-response` - handle blockers.
+- `aca-find-leads`: refill the audience.
+- `aca-content-week`: refill content.
+- `aca-positive-reply-scoring`: learn from replies.
+- `aca-experiment-design`: plan the next test.
+- `aca-deliverability-incident-response`: handle blockers.
 
 **Handoff block**
 
@@ -132,14 +145,23 @@ This skill participates in the ACA chain. Preserve the selected ACA org, relevan
 Chain state: {continue|needs_approval|blocked|complete}
 Next skill: {aca-skill-name|none}
 Reason: {why this handoff is or is not needed}
-Carry forward: {org_id/name, product_id, icp_id, lead_list_id, campaign_id, sequence_id, job_id, approvals, constraints}
+Carry forward: {workspace, stage, campaign_id, lead_list_id, sequence_id, job_id, approvals, constraints}
 ```
 
 ## ACA tools used
 
-- `list_campaigns`, `list_campaign_leads`, `update_campaign_status`
-- `list_email_sequences`, `list_email_enrollments`, `list_email_mailboxes`
-- `list_linkedin_import_jobs`, `list_apify_leads_import_jobs`
-- `list_generation_jobs`, `list_autopilots`, `trigger_autopilot`
-- `list_pool_entries`
-- `create_strategy_document`
+- `get_started`, `get_workspace`
+- `list_campaigns`, `get_campaign_metrics`
+- `search_conversations`
+- `list_sequences`
+- `list_lead_lists`
+- `list_lead_magnets`
+- `list_content_ideas`, `list_content_generation_jobs`
+
+## ACA app pages
+
+- Campaigns: `https://www.automatedclientacquisition.com/campaigns/{id}`
+- Sequences: `https://www.automatedclientacquisition.com/email/sequences`
+- Mailbox health: `https://www.automatedclientacquisition.com/email/mailboxes`, `/email/analytics`
+- Autopilots and publishing: `https://www.automatedclientacquisition.com/autopilots`, `/publish-queue`
+- Save the weekly note: `https://www.automatedclientacquisition.com/assets?tab=strategies`
