@@ -1,10 +1,28 @@
-# ACA Native MCP Skills
+# Automated Client Acquisition for Claude
 
-**One ACA MCP connection. 27 agent skills. Zero vendor API sprawl.**
+**Run your outbound from Claude: ICP, lead lists, cold email, LinkedIn outreach, deliverability, replies and content. One sign-in, no API keys.**
 
-ACA Native MCP Skills turns Automated Client Acquisition into an agent-operable growth system for Claude, Codex, Cursor, Goose, and other skills-compatible runtimes.
+Tell Claude what you sell and who you sell to. It builds the ICP, pulls matching leads, writes the sequence, checks your senders and launches the campaign in your ACA workspace. It asks before anything goes live or spends credits.
 
-Instead of wiring separate Smartlead, Prospeo, Zapmail, Apify, LinkedIn, GHL, and enrichment keys into every agent workflow, you connect ACA once. ACA handles auth, organization scoping, sender accounts, lead sources, content generation, publishing, and campaign execution through its native MCP server.
+## Get started in 2 minutes
+
+1. Install the plugin from the Claude directory.
+2. When Claude asks, click **Connect** and sign in to your ACA account. No API key, no config file.
+3. Say: **"Set up ACA for my business"**. The `aca-kickoff` skill walks you through product, ICP, brand voice and your first campaign.
+
+No ACA account yet? [Start here](https://www.automatedclientacquisition.com/pricing).
+
+## Try these prompts
+
+- "Build an ICP for UK recruitment agencies and find 200 matching leads."
+- "Write a 4-step cold email sequence for this list in our brand voice."
+- "Check my sender health before I launch."
+- "Show today's replies and draft answers that book a call."
+- "Turn this case study into 5 LinkedIn posts."
+
+## What it does with your data
+
+The plugin connects to ACA's MCP server (`mcp.automatedclientacquisition.com`) using OAuth. It reads and writes contacts, lead lists, campaigns, sequences, content and replies in the ACA workspace you sign in to. See the [privacy policy](https://www.automatedclientacquisition.com/privacy).
 
 ## What Is Automated Client Acquisition?
 
@@ -95,7 +113,9 @@ These skills are chained. Each skill includes upstream/downstream rules and a ha
 - `aca-experiment-design` - create one controlled outbound/content experiment with a clean metric
 - `aca-auto-research` - autonomous research loop that finds gaps and routes to the next ACA workflow
 
-## Quick Start
+## Use outside Claude (Codex, Cursor, other runtimes)
+
+In Claude, the plugin connects automatically. For other runtimes:
 
 Clone the repo:
 
@@ -124,24 +144,24 @@ For another skills-compatible runtime:
 ./install.sh --target ~/.your-agent/skills
 ```
 
-Then configure ACA MCP once using `.mcp.example.json`.
+Then connect ACA MCP:
 
-## The One Required Connection
+### Connect ACA MCP
 
-Create an ACA MCP API key in ACA under Settings -> MCP / API, then add the MCP server to your runtime:
+Add the ACA MCP server to your runtime. Runtimes that support OAuth will prompt you to sign in:
 
 ```json
 {
   "mcpServers": {
     "aca": {
-      "url": "https://your-aca-domain.com/functions/v1/mcp",
-      "headers": {
-        "Authorization": "Bearer aca_mcp_sk_live_..."
-      }
+      "type": "http",
+      "url": "https://mcp.automatedclientacquisition.com/mcp"
     }
   }
 }
 ```
+
+If your runtime does not support OAuth, create an ACA MCP API key under Settings -> MCP / API and send it as an `Authorization: Bearer` header.
 
 If you manage multiple client workspaces, the skills use `list_accessible_organizations` and `switch_organization` so the agent operates in the right ACA org.
 
