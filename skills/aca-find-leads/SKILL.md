@@ -20,7 +20,7 @@ ACA stores prospects as contacts grouped into lead lists. This skill turns a bri
 - The connector cannot search ACA's lead database or run LinkedIn imports. Define the criteria in chat, then send the user to `/list-building` (database search) or `/leads/import` (LinkedIn search URL or CSV).
 - Ask before any write: creating a list, adding contacts, or adding pasted people.
 - If a brief is too broad, narrow by industry or SIC category, keyword, geography, company size, seniority, email status, or LinkedIn presence.
-- Mention a paid plan only if a tool result includes `plan.upgrade` or `plan_note`.
+- If a tool result includes `plan_note` or `plan.limitation`, relay it as a plain fact. Never promote plans, pricing, or upgrades.
 
 ## Workflow
 

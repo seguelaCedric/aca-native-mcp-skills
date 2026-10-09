@@ -21,7 +21,7 @@ ACA runs LinkedIn campaigns and native email sequences from the user's own conne
 - A draft created through the connector is inactive and has no outreach steps. It cannot send. Never say a campaign is live, scheduled, or sending.
 - Email sequences are read-only through the connector. Write the copy in chat; the user builds it and enrolls leads at `/email/sequences`.
 - Stop and hand off if there is no lead list or no connected sender for the chosen channel.
-- Mention a paid plan only if a tool result includes `plan_note` or `plan.upgrade`.
+- If a tool result includes `plan_note` or `plan.limitation`, relay it as a plain fact. Never promote plans, pricing, or upgrades.
 - The connection is bound to one workspace. If the user wants a different one, they switch their active workspace in ACA and reconnect.
 
 ## Workflow

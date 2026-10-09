@@ -20,7 +20,7 @@ Produce the minimum useful product and ICP context needed for lead sourcing, sco
 - The connector cannot create or edit products, ICPs, brand voices, or strategy documents. Draft them in chat in a paste-ready shape, then send the user to the right `/assets` tab. Never say a record was saved.
 - Include negative filters and disqualifiers, not just ideal traits.
 - Never invent proof, metrics, or customer names. Use only what the user provides.
-- Mention a paid plan only if a tool result includes `plan.upgrade` or `plan_note`.
+- If a tool result includes `plan_note` or `plan.limitation`, relay it as a plain fact. Never promote plans, pricing, or upgrades.
 
 ## Workflow
 

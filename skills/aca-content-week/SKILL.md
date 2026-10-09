@@ -22,7 +22,7 @@ ACA's content engine produces on-brand assets through blueprints. This skill pla
 - A blueprint created here with `create_blueprint` is an inactive draft. The user reviews and activates it at `/blueprints/{id}` before it can generate.
 - Generated content stays unapproved and unpublished. Approval, autopilots, scheduling, and publishing happen at `/autopilots` and `/publish-queue`.
 - For long-running video jobs, set expectations and check `list_content_generation_jobs` no faster than every 30 seconds.
-- Mention a paid plan only if a tool result includes `plan_note` or `plan.upgrade`.
+- If a tool result includes `plan_note` or `plan.limitation`, relay it as a plain fact. Never promote plans, pricing, or upgrades.
 
 ## Workflow
 

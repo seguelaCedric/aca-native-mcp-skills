@@ -20,7 +20,7 @@ Review the connected workspace, name the single biggest bottleneck with evidence
 - Launching, importing, activating, pausing, and publishing happen in the ACA app. Give the link.
 - Never invent data. Evidence is counts and records exactly as returned. `get_campaign_metrics` returns stored counts, never rates.
 - Prefer one recommendation over a long list.
-- Mention a paid plan only if a tool result includes `plan_note` or `plan.upgrade`.
+- If a tool result includes `plan_note` or `plan.limitation`, relay it as a plain fact. Never promote plans, pricing, or upgrades.
 
 ## Workflow
 

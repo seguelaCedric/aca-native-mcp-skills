@@ -70,7 +70,7 @@ App base URL: `https://www.automatedclientacquisition.com`
 - Batch caps: up to 100 contacts per `bulk_create_contacts` or `add_contacts_to_list` call, up to 25 ideas per `create_content_ideas` call. Split larger jobs and confirm the total first.
 - Never invent people, emails, phone numbers, companies, metrics or results. Contacts come from the user or from ACA; report counts exactly as returned.
 - Confirm cost before `start_content_generation`.
-- Mention a paid plan only if a tool result includes `plan_note` or `plan.upgrade`.
+- If a tool result includes `plan_note` or `plan.limitation`, relay it as a plain fact. Never promote plans, pricing, or upgrades.
 - Tag the source or signal on contacts when recording pipeline work (read the contact first, then `update_contact` with the full tag set).
 
 ## Handoffs

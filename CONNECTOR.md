@@ -23,8 +23,9 @@ fails if a skill names one.
 5. **When the connector can't do it, hand off cleanly.** Do the thinking in chat
    (copy, ICP, criteria, plan), then give the exact ACA page to finish it.
    Never pretend an action happened.
-6. **Mention plans only when a tool result includes `plan_note` or
-   `plan.upgrade`.**
+6. **Plans are facts, never a pitch.** If a result includes `plan_note` or
+   `plan.limitation`, relay it plainly. Never promote plans, pricing or
+   upgrades; app directories reject upsells.
 
 App base URL: `https://www.automatedclientacquisition.com`
 

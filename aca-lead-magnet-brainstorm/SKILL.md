@@ -20,7 +20,7 @@ Plan lead magnets and the comment-to-DM keyword campaigns that deliver them, the
 - Prefer specific tools, calculators, teardown templates, checklists, and scripts over generic PDFs.
 - Ask before any write. `create_lead_magnet_draft` creates an inactive draft. It cannot monitor posts, send DMs, or deliver a link until the user activates it at `/lead-magnets`.
 - Never invent results or capture numbers. Report counts from `list_lead_magnets` and `get_lead_magnet` as returned.
-- If a tool result includes `plan_note` or `plan.upgrade`, relay it plainly. Do not mention plans otherwise.
+- If a tool result includes `plan_note` or `plan.limitation`, relay it as a plain fact. Never promote plans, pricing, or upgrades.
 
 ## Workflow
 

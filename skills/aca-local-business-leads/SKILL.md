@@ -21,7 +21,7 @@ Define a tight local-niche audience, send the user to ACA to build it, then veri
 - The connector cannot search ACA's lead database or run imports. Write the spec in chat, then send the user to `/list-building` or `/leads/import`.
 - Ask before creating lists or adding contacts.
 - Segment by channel readiness after the list is built.
-- Mention a paid plan only if a tool result includes `plan.upgrade` or `plan_note`.
+- If a tool result includes `plan_note` or `plan.limitation`, relay it as a plain fact. Never promote plans, pricing, or upgrades.
 
 ## Workflow
 

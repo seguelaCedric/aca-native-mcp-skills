@@ -19,7 +19,7 @@ Turn a raw ACA lead list into clean outreach segments, using only data ACA alrea
 - If analysis data is missing, put the contact in "Needs enrichment" rather than guessing.
 - Never delete contacts or remove them from the source list. Segment into new lists and tags instead. Removing or deleting happens at `/leads/lists` if the user asks.
 - Ask before tagging or creating lists, and confirm volume first on large lists.
-- Mention a paid plan only if a tool result includes `plan.upgrade` or `plan_note`.
+- If a tool result includes `plan_note` or `plan.limitation`, relay it as a plain fact. Never promote plans, pricing, or upgrades.
 
 ## Workflow
 

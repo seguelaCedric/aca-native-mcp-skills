@@ -22,7 +22,7 @@ This skill turns ACA from a launch tool into an operating system. It reviews the
 - Pausing, resuming, or editing campaigns and sequences, running autopilots, and publishing happen in the ACA app. Recommend the change and give the link.
 - Prefer one controlled experiment at a time.
 - Keep the output operational: what changed, what to do next, and what is blocked.
-- Mention a paid plan only if a tool result includes `plan_note` or `plan.upgrade`.
+- If a tool result includes `plan_note` or `plan.limitation`, relay it as a plain fact. Never promote plans, pricing, or upgrades.
 
 ## Workflow
 

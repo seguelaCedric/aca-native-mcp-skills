@@ -19,7 +19,7 @@ The guided entry point for running ACA through an agent. It turns a vague goal i
 - Never invent prospects, emails, companies, or results. Contacts come from the user or from ACA.
 - Ask before creating anything in ACA unless the user explicitly asked you to set it up.
 - Campaigns are created as inactive drafts. Activation, sending, imports, and connecting LinkedIn or mailboxes happen in the ACA app; give the link.
-- Mention a paid plan only if a tool result includes `plan.upgrade` or `plan_note`, and only for the step the user wants.
+- If a tool result includes `plan_note` or `plan.limitation`, relay it as a plain fact. Never promote plans, pricing, or upgrades.
 - The connection is bound to one workspace. If the user wants a different one, they switch their active workspace in ACA and reconnect.
 
 ## Workflow

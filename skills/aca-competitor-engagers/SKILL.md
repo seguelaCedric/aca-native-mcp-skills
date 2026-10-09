@@ -20,7 +20,7 @@ Build an audience around competitor and category signals. This skill designs the
 - Never invent people, companies, or counts.
 - Ask before creating lists or adding contacts.
 - Avoid hostile competitor messaging. Position as an alternative, never as an attack.
-- Mention a paid plan only if a tool result includes `plan.upgrade` or `plan_note`.
+- If a tool result includes `plan_note` or `plan.limitation`, relay it as a plain fact. Never promote plans, pricing, or upgrades.
 
 ## Workflow
 

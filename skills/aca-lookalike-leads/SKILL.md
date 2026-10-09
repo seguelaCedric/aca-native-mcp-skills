@@ -19,7 +19,7 @@ Use an existing winning segment in ACA to define a new prospect audience. The co
 - Derive traits only from data ACA returns or the user provides. State which traits are copied and which are excluded.
 - The connector cannot search ACA's lead database or run imports. Turn the traits into a search spec, then send the user to `/list-building` or `/leads/import`.
 - Ask before creating lists or adding contacts.
-- Mention a paid plan only if a tool result includes `plan.upgrade` or `plan_note`.
+- If a tool result includes `plan_note` or `plan.limitation`, relay it as a plain fact. Never promote plans, pricing, or upgrades.
 
 ## Workflow
 

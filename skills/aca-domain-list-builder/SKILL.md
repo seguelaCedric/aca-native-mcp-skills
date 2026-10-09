@@ -20,7 +20,7 @@ Turn a target account list into a usable lead list: first by collecting contacts
 - The connector cannot search ACA's lead database or run imports. Write the spec for the missing accounts and send the user to `/list-building` or `/leads/import`.
 - Ask before creating lists or adding contacts.
 - Keep source notes so the list's origin is clear (list name and description).
-- Mention a paid plan only if a tool result includes `plan.upgrade` or `plan_note`.
+- If a tool result includes `plan_note` or `plan.limitation`, relay it as a plain fact. Never promote plans, pricing, or upgrades.
 
 ## Workflow
 
