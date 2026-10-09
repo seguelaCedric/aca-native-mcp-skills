@@ -18,7 +18,7 @@
     "shortDescription": "Manage leads and outreach",
     "longDescription": "ACA helps go-to-market teams run client acquisition from one connected workspace. Check what the workspace has set up and the recommended next steps; search contacts, lead lists, conversations, sequences, campaigns, and campaign metrics; list connected LinkedIn and social accounts and CRM pipeline stages; create contacts, lead lists, content ideas, blueprints, agent profiles, and inactive LinkedIn campaign and lead-magnet drafts. Start content generation from existing active blueprints using external AI providers; generated content remains unapproved and unpublished.\n\nLimitations: the app never sends messages, activates campaigns, or enrolls leads. Drafts are reviewed and activated in the ACA web app, where users also connect accounts and mailboxes and find new prospects. It only accesses the single workspace the user authorizes through OAuth. Contact changes may trigger configured webhooks, and adding contacts to a list can trigger that list's existing enrichment, enrollment, and outreach automations, so review the target list settings first.",
     "developerName": "Automated Client Acquisition",
-    "category": "Business",
+    "category": "Productivity",
     "capabilities": [
       "Workspace setup guidance",
       "Search contacts and lead lists",
