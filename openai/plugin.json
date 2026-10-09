@@ -1,0 +1,105 @@
+{
+  "name": "aca-native-mcp-skills",
+  "version": "1.5.2",
+  "description": "ACA (Automated Client Acquisition) connector and skills for ChatGPT: workspace setup guidance, contacts, lead lists, LinkedIn campaign and lead-magnet drafts, campaign results, replies, and content planning, through one OAuth sign-in.",
+  "author": {
+    "name": "Automated Client Acquisition",
+    "email": "support@automatedclientacquisition.com",
+    "url": "https://www.automatedclientacquisition.com"
+  },
+  "homepage": "https://www.automatedclientacquisition.com/mcp",
+  "repository": "https://github.com/seguelaCedric/aca-native-mcp-skills",
+  "license": "MIT",
+  "keywords": ["outbound", "lead-generation", "cold-email", "linkedin", "crm", "sales"],
+  "skills": "./skills/",
+  "mcpServers": "./.mcp.json",
+  "interface": {
+    "displayName": "ACA",
+    "shortDescription": "Manage leads and outreach",
+    "longDescription": "ACA helps go-to-market teams run client acquisition from one connected workspace. Check what the workspace has set up and the recommended next steps; search contacts, lead lists, conversations, sequences, campaigns, and campaign metrics; list connected LinkedIn and social accounts and CRM pipeline stages; create contacts, lead lists, content ideas, blueprints, agent profiles, and inactive LinkedIn campaign and lead-magnet drafts. Start content generation from existing active blueprints using external AI providers; generated content remains unapproved and unpublished.\n\nLimitations: the app never sends messages, activates campaigns, or enrolls leads. Drafts are reviewed and activated in the ACA web app, where users also connect accounts and mailboxes and find new prospects. It only accesses the single workspace the user authorizes through OAuth. Contact changes may trigger configured webhooks, and adding contacts to a list can trigger that list's existing enrichment, enrollment, and outreach automations, so review the target list settings first.",
+    "developerName": "Automated Client Acquisition",
+    "category": "Business",
+    "capabilities": [
+      "Workspace setup guidance",
+      "Search contacts and lead lists",
+      "Build lead lists",
+      "Draft LinkedIn campaigns",
+      "Draft lead magnets",
+      "Read campaign results",
+      "Triage replies",
+      "Plan and generate content"
+    ],
+    "websiteURL": "https://www.automatedclientacquisition.com/mcp",
+    "supportURL": "https://www.automatedclientacquisition.com/support",
+    "privacyPolicyURL": "https://www.automatedclientacquisition.com/privacy",
+    "termsOfServiceURL": "https://www.automatedclientacquisition.com/terms",
+    "defaultPrompt": [
+      "What should I do next in my ACA workspace?",
+      "Which of my campaigns got replies this week?",
+      "Find contacts at Acme and summarize likely decision makers."
+    ],
+    "brandColor": "#D92D20",
+    "composerIcon": "./assets/logo.png",
+    "logo": "./assets/logo.png"
+  },
+  "extensions": {
+    "com.openai": {
+      "onboardingSkill": "./skills/aca-kickoff/SKILL.md",
+      "review": {
+        "test_cases": {
+          "positive": [
+            {
+              "description": "Show workspace status and next steps.",
+              "prompt": "What should I do next in my ACA workspace?",
+              "tools_triggered": "get_started",
+              "expected_behavior": "Returns the authorized workspace's setup stage, record counts, and up to three next steps, without inventing data or promoting plans."
+            },
+            {
+              "description": "Find contacts in the review workspace.",
+              "prompt": "Find contacts at Acme in ACA and summarize likely decision makers.",
+              "tools_triggered": "search_contacts",
+              "expected_behavior": "Returns concise, paginated matching contacts from the authorized workspace only."
+            },
+            {
+              "description": "Inspect an individual contact after selection.",
+              "prompt": "Show the ACA contact details and recent engagement for Taylor at Acme.",
+              "tools_triggered": "search_contacts, get_contact",
+              "expected_behavior": "Finds the selected contact and returns that contact's details and recent engagement."
+            },
+            {
+              "description": "Review outreach sequences.",
+              "prompt": "Which ACA outreach sequences are active? Give me a short summary of Q4 SaaS.",
+              "tools_triggered": "list_sequences, get_sequence",
+              "expected_behavior": "Returns bounded sequence summaries and the requested sequence's summary and step count."
+            },
+            {
+              "description": "Triage an inbound reply without sending a message.",
+              "prompt": "Find ACA conversations with an inbound reply from Taylor and summarize the next follow-up needed.",
+              "tools_triggered": "search_contacts, search_conversations, get_conversation",
+              "expected_behavior": "Returns the conversation and a concise follow-up summary without sending or modifying messages."
+            }
+          ],
+          "negative": [
+            {
+              "description": "Do not use ACA for unrelated calendar scheduling.",
+              "prompt": "What meetings do I have tomorrow?"
+            },
+            {
+              "description": "Do not use ACA to send an outreach message.",
+              "prompt": "Send a LinkedIn message to every Acme contact."
+            },
+            {
+              "description": "Do not use ACA to access another organization's contacts.",
+              "prompt": "Show me contacts from an ACA workspace I am not connected to."
+            }
+          ]
+        },
+        "commerce": false,
+        "commerce_description": "ACA does not sell products or process payments in ChatGPT."
+      },
+      "publication": {
+        "release_notes": "Adds get_started for workspace setup guidance, list_connected_accounts and list_pipeline_stages, clearer tool descriptions, and scoped server instructions. Draft results state plan limits as facts with no pricing or upgrade prompts."
+      }
+    }
+  }
+}

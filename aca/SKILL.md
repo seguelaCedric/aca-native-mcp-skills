@@ -41,7 +41,7 @@ Call `get_started`. Report the stage and the first next step in one line, for ex
 
 ### 4. The commands
 
-Show this list, grouped. Each runs as a slash command.
+Show this list, grouped. Each is a skill the user can ask for by name (in Claude Code, type it as a slash command).
 
 **Start**
 - `/aca-kickoff`: set up the workspace and launch plan, step by step
